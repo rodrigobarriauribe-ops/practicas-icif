@@ -1,7 +1,7 @@
-// Conexión con Supabase. Copia estos dos datos desde Supabase → Project Settings → API.
-// La clave pública ("anon" o "publishable") puede ir aquí: está hecha para usarse en el navegador.
-// Nunca pongas aquí la clave "service_role" o "secret".
+// Conexión con Supabase. Datos de Supabase → Project Settings → API Keys.
+// La clave pública ("publishable") puede ir aquí: está hecha para usarse en el navegador.
+// Nunca pongas aquí la clave "secret" o "service_role".
 window.APP_CONFIG = {
-  supabaseUrl: 'https://TU_PROYECTO.supabase.co',
-  supabaseKey: 'PEGA_AQUI_LA_CLAVE_PUBLICA'
+  supabaseUrl: 'https://umtzaumrjgooufmahmld.supabase.co',
+  supabaseKey: 'sb_publishable_MhFfCqWuZAjCy941tXl9UA_tn1FMqI9'
 };
