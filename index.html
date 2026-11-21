@@ -1,0 +1,1684 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prácticas ICIF</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 34 34%22%3E%3Crect width=%2234%22 height=%2234%22 rx=%228%22 fill=%22%230a6a85%22/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Layout: barra de perfiles arriba; cada perfil abre con su resumen y luego lista + detalle. */
+  --bg:#f2f5f7;
+  --surface:#ffffff;
+  --surface-2:#f7f9fa;
+  --ink:#13212e;
+  --muted:#556574;
+  --line:#dbe2e8;
+  --accent:#0a6a85;
+  --accent-ink:#ffffff;
+  --accent-soft:#e0eff4;
+  --ok:#1b7045; --ok-soft:#e0f1e7;
+  --warn:#975400; --warn-soft:#fbeed6;
+  --crit:#b3261e; --crit-soft:#fbe5e2;
+  --info:#3a55a0; --info-soft:#e5eaf7;
+  --font-display:"IBM Plex Sans Condensed","Arial Narrow",system-ui,sans-serif;
+  --font-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --font-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  --radius:10px;
+  --shadow:0 1px 2px rgba(19,33,46,.06),0 4px 16px rgba(19,33,46,.06);
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0d141b; --surface:#141e28; --surface-2:#18242f; --ink:#e4ecf2; --muted:#98a9b8; --line:#26364a;
+    --accent:#56b6d2; --accent-ink:#04202a; --accent-soft:#143440;
+    --ok:#62c792; --ok-soft:#14301f; --warn:#e3a957; --warn-soft:#33260e; --crit:#f2867a; --crit-soft:#3b1815; --info:#93acef; --info-soft:#1a2443;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 6px 20px rgba(0,0,0,.35);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0d141b; --surface:#141e28; --surface-2:#18242f; --ink:#e4ecf2; --muted:#98a9b8; --line:#26364a;
+  --accent:#56b6d2; --accent-ink:#04202a; --accent-soft:#143440;
+  --ok:#62c792; --ok-soft:#14301f; --warn:#e3a957; --warn-soft:#33260e; --crit:#f2867a; --crit-soft:#3b1815; --info:#93acef; --info-soft:#1a2443;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 6px 20px rgba(0,0,0,.35);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:var(--font-display);font-weight:600;line-height:1.15;margin:0;text-wrap:balance;letter-spacing:.005em}
+h2{font-size:1.45rem}
+h3{font-size:1.12rem}
+h4{font-size:.98rem}
+p{margin:0}
+small{font-size:.82rem}
+.mono{font-family:var(--font-mono);font-size:.88em}
+.num{font-variant-numeric:tabular-nums}
+.muted{color:var(--muted)}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* ——— Barra superior ——— */
+.appbar{position:sticky;top:0;z-index:20;display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;padding:12px max(16px,calc((100% - 1280px)/2));background:var(--surface);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.brand svg{flex:none}
+.brand-name{font-family:var(--font-display);font-weight:700;font-size:1.15rem;line-height:1.1}
+.brand-sub{font-size:.78rem;color:var(--muted)}
+.roles{display:flex;flex-wrap:wrap;gap:4px;padding:3px;background:var(--surface-2);border:1px solid var(--line);border-radius:999px;margin-left:auto}
+.roles button{border:0;background:transparent;padding:6px 14px;border-radius:999px;cursor:pointer;font-weight:500;font-size:.9rem;color:var(--muted)}
+.roles button:hover{color:var(--ink)}
+.roles button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.whoami{display:flex;align-items:center;gap:8px;font-size:.88rem}
+.whoami label{color:var(--muted)}
+.whoami select{padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--surface);max-width:260px}
+.proto-bar{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;padding:7px max(16px,calc((100% - 1280px)/2));font-size:.82rem;color:var(--muted);background:var(--surface-2);border-bottom:1px solid var(--line)}
+.linkbtn{border:0;background:none;color:var(--accent);cursor:pointer;padding:0;text-decoration:underline;text-underline-offset:2px;font-size:inherit}
+
+.whoami{margin-left:auto}
+.who-n{display:grid;line-height:1.2;text-align:right}
+.login-card{max-width:540px;width:100%;margin:40px auto}
+main{max-width:1280px;margin:0 auto;padding:22px 16px 64px;display:grid;gap:22px}
+main > *,.card > *,.detail > *,.split > *,.two > *,.drawer-body > *{min-width:0}
+.page-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:10px 20px}
+.page-head p{color:var(--muted);max-width:68ch}
+.eyebrow{font-size:.76rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+
+/* ——— Piezas ——— */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;display:grid;gap:14px;align-content:start}
+.card-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:6px 14px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px 14px;border-radius:8px;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-weight:500;font-size:.9rem;line-height:1.2;text-decoration:none;color:var(--ink)}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.danger{color:var(--crit);border-color:color-mix(in srgb,var(--crit) 40%,var(--line))}
+.btn.small{padding:5px 10px;font-size:.84rem}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.btn-row{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-flex;align-items:center;gap:5px;padding:2px 9px;border-radius:999px;font-size:.78rem;font-weight:600;white-space:nowrap;border:1px solid transparent}
+.chip::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.chip.plain::before{display:none}
+.tone-neutral{background:var(--surface-2);color:var(--muted);border-color:var(--line)}
+.tone-accent{background:var(--accent-soft);color:var(--accent)}
+.tone-ok{background:var(--ok-soft);color:var(--ok)}
+.tone-warn{background:var(--warn-soft);color:var(--warn)}
+.tone-crit{background:var(--crit-soft);color:var(--crit)}
+.tone-info{background:var(--info-soft);color:var(--info)}
+.tag{font-family:var(--font-mono);font-size:.76rem;padding:1px 7px;border-radius:5px;background:var(--surface-2);border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.chips{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.empty{color:var(--muted);font-style:italic;padding:8px 0}
+.note{font-size:.86rem;color:var(--muted)}
+.callout{display:grid;gap:4px;padding:10px 14px;border-radius:8px;border-left:4px solid currentColor;font-size:.9rem}
+.callout strong{color:var(--ink)}
+.callout p{color:var(--ink)}
+
+/* KPIs */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;display:grid;gap:2px}
+.kpi .k-label{font-size:.8rem;color:var(--muted);font-weight:500}
+.kpi .k-val{font-family:var(--font-display);font-size:2rem;font-weight:600;line-height:1.1;font-variant-numeric:tabular-nums}
+.kpi .k-sub{font-size:.78rem;color:var(--muted)}
+.kpi.flag{border-top:3px solid var(--warn)}
+.kpi.flag-crit{border-top:3px solid var(--crit)}
+
+/* Embudo por etapa */
+.pipeline{display:flex;flex-wrap:wrap;gap:6px}
+.pipe-step{flex:1 1 110px;display:grid;gap:4px;padding:10px 12px;border-radius:8px;border:1px solid var(--line);background:var(--surface);cursor:pointer;text-align:left}
+.pipe-step:hover{border-color:var(--accent)}
+.pipe-step[aria-pressed="true"]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.pipe-step .p-n{font-family:var(--font-display);font-size:1.4rem;font-weight:600;line-height:1;font-variant-numeric:tabular-nums}
+.pipe-step .p-l{font-size:.76rem;color:var(--muted);line-height:1.25}
+.pipe-step .bar{height:4px;border-radius:2px;background:var(--line);overflow:hidden}
+.pipe-step .bar i{display:block;height:100%;background:var(--accent)}
+
+/* Alertas */
+.alerts{display:grid;gap:6px}
+.alert-row{display:grid;grid-template-columns:4px 1fr auto;gap:12px;align-items:center;padding:9px 12px 9px 0;border:1px solid var(--line);border-radius:8px;background:var(--surface);cursor:pointer;text-align:left;width:100%}
+.alert-row:hover{border-color:var(--muted)}
+.alert-row .stripe{align-self:stretch;border-radius:8px 0 0 8px}
+.alert-row .a-who{font-weight:600}
+.alert-row .a-txt{font-size:.88rem;color:var(--muted)}
+.sev-crit .stripe{background:var(--crit)}
+.sev-warn .stripe{background:var(--warn)}
+.sev-info .stripe{background:var(--info)}
+
+/* Tabla */
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.toolbar input,.toolbar select{padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+.toolbar input[type="search"]{flex:1 1 220px;min-width:0}
+.table-wrap{position:relative;overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface)}
+table.grid{width:100%;border-collapse:collapse;font-size:.9rem}
+table.grid th,table.grid td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+table.grid thead th{font-size:.76rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:600;background:var(--surface-2);white-space:nowrap}
+table.grid tbody tr{cursor:pointer}
+table.grid tbody tr:hover{background:var(--surface-2)}
+table.grid tbody tr:last-child td{border-bottom:0}
+.rowbtn{border:0;background:none;padding:0;font-weight:600;cursor:pointer;text-align:left;color:var(--ink)}
+.rowbtn:hover{color:var(--accent)}
+.notes3{display:flex;gap:10px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.notes3 span{display:grid;line-height:1.15}
+.notes3 small{font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.notes3 b{font-weight:600}
+.n-red{color:var(--crit)}
+.alert-dot{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 6px;border-radius:11px;font-size:.78rem;font-weight:700}
+
+/* Tabs */
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line)}
+.tabs button{border:0;background:none;padding:10px 14px;cursor:pointer;font-weight:500;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+
+/* Diseño lista + detalle */
+.split{display:grid;grid-template-columns:minmax(250px,330px) 1fr;gap:18px;align-items:start}
+.list{display:grid;gap:8px}
+.list-item{display:grid;gap:5px;padding:12px 14px;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);cursor:pointer;text-align:left;width:100%}
+.list-item:hover{border-color:var(--muted)}
+.list-item[aria-current="true"]{border-color:var(--accent);box-shadow:inset 3px 0 0 var(--accent)}
+.list-item .li-name{font-weight:600}
+.list-item .li-meta{font-size:.82rem;color:var(--muted)}
+.detail{display:grid;gap:16px}
+.detail-head{display:grid;gap:6px}
+
+/* Datos */
+dl.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px 18px;margin:0}
+dl.facts div{display:grid;gap:1px;min-width:0}
+dl.facts dt{font-size:.75rem;color:var(--muted);font-weight:500}
+dl.facts dd{margin:0;overflow-wrap:anywhere}
+
+/* Stepper */
+.stepper{display:grid;grid-template-columns:repeat(7,1fr);gap:0;list-style:none;margin:0;padding:0}
+.stepper li{position:relative;display:grid;justify-items:center;gap:4px;text-align:center;padding:0 2px;font-size:.78rem}
+.stepper li::before{content:"";position:absolute;top:11px;left:-50%;width:100%;height:2px;background:var(--line);z-index:0}
+.stepper li:first-child::before{display:none}
+.stepper li.done::before,.stepper li.current::before{background:var(--accent)}
+.stepper .dot{position:relative;z-index:1;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:var(--surface);border:2px solid var(--line);font-size:.72rem;font-weight:700;color:var(--muted)}
+.stepper li.done .dot{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.stepper li.current .dot{border-color:var(--accent);color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
+.stepper .s-l{font-weight:600;line-height:1.2}
+.stepper .s-d{color:var(--muted);font-size:.72rem}
+
+/* Matriz */
+.matrix-wrap{position:relative;overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius)}
+table.matrix{width:100%;border-collapse:collapse;font-size:.88rem;min-width:720px}
+table.matrix th,table.matrix td{border-bottom:1px solid var(--line);padding:8px 10px;vertical-align:middle}
+table.matrix thead th{background:var(--surface-2);font-size:.78rem;font-weight:600;text-align:center;line-height:1.25}
+table.matrix thead th small{display:block;font-weight:400;color:var(--muted);font-size:.72rem;margin-top:2px}
+table.matrix tbody tr:last-child th,table.matrix tbody tr:last-child td{border-bottom:0}
+table.matrix .crit-col{text-align:left;width:38%}
+table.matrix .crit-col strong{display:block;font-weight:600}
+table.matrix .crit-col small{display:block;color:var(--muted);font-weight:400;font-size:.8rem;line-height:1.35}
+table.matrix .w-col{text-align:center;color:var(--muted);width:56px;font-variant-numeric:tabular-nums}
+table.matrix td.lvl{text-align:center;width:13%}
+table.matrix td.lvl.sel{background:var(--accent-soft)}
+.lvl-pick{display:inline-grid;place-items:center;cursor:pointer;position:relative}
+.lvl-pick input{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer}
+.lvl-pick .dot{width:30px;height:30px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-weight:700;font-size:.85rem;color:var(--muted);background:var(--surface)}
+.lvl-pick:hover .dot{border-color:var(--accent)}
+.lvl-pick input:checked + .dot{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.lvl-pick input:focus-visible + .dot{outline:2px solid var(--accent);outline-offset:2px}
+.lvl-mark{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-weight:700;font-size:.8rem}
+.score{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px;padding:12px 14px;border-radius:8px;background:var(--surface-2);border:1px solid var(--line)}
+.score .big{font-family:var(--font-display);font-size:2rem;font-weight:600;line-height:1;font-variant-numeric:tabular-nums}
+.score .lbl{font-size:.82rem;color:var(--muted)}
+
+/* Formularios */
+fieldset{border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px 16px;margin:0;display:grid;gap:12px}
+legend{font-family:var(--font-display);font-weight:600;font-size:1rem;padding:0 6px}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px 16px}
+.field{display:grid;gap:4px;min-width:0}
+.field label,.field .lab{font-size:.8rem;font-weight:500;color:var(--muted)}
+.field input,.field select,.field textarea{padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);width:100%;min-width:0}
+.field textarea{min-height:84px;resize:vertical}
+.field input[readonly]{background:var(--surface-2);color:var(--muted)}
+.field.err input,.field.err select,.field.err textarea{border-color:var(--crit)}
+.field .ferr{font-size:.78rem;color:var(--crit)}
+.checks{display:grid;gap:8px}
+.check{display:flex;gap:10px;align-items:flex-start;font-size:.9rem}
+.check input{margin-top:3px;width:16px;height:16px;accent-color:var(--accent);flex:none}
+.check.err{color:var(--crit)}
+.radio-inline{display:flex;gap:16px;flex-wrap:wrap}
+.radio-inline label{display:flex;gap:6px;align-items:center;font-size:.9rem;color:var(--ink)}
+.radio-inline input{accent-color:var(--accent)}
+.errbox{border:1px solid var(--crit);background:var(--crit-soft);color:var(--ink);border-radius:8px;padding:10px 14px;font-size:.9rem}
+.errbox ul{margin:6px 0 0;padding-left:18px}
+
+/* Archivos */
+.drop{display:grid;justify-items:center;gap:6px;padding:20px;border:2px dashed var(--line);border-radius:var(--radius);text-align:center;background:var(--surface-2);cursor:pointer;position:relative}
+.drop:hover,.drop.over{border-color:var(--accent);background:var(--accent-soft)}
+.drop input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.drop strong{color:var(--accent)}
+.files{display:grid;gap:6px}
+.file-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+.file-row .f-ico{width:30px;height:36px;flex:none;border-radius:4px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-family:var(--font-mono);font-size:.62rem;font-weight:700}
+.file-row .f-main{flex:1 1 200px;min-width:0;display:grid}
+.file-row .f-name{font-weight:500;overflow-wrap:anywhere}
+.file-row .f-meta{font-size:.8rem;color:var(--muted)}
+
+/* Columna lateral del estudiante */
+.two{display:grid;grid-template-columns:1fr minmax(260px,330px);gap:18px;align-items:start}
+.rules{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+.rules li{display:grid;grid-template-columns:22px 1fr;gap:8px;font-size:.88rem}
+.rules li b{display:block;font-weight:600}
+.rules .ri{width:22px;height:22px;border-radius:6px;display:grid;place-items:center;font-size:.75rem;font-weight:700;background:var(--warn-soft);color:var(--warn)}
+
+/* Historial */
+.timeline{list-style:none;margin:0;padding:0;display:grid;gap:0}
+.timeline li{display:grid;grid-template-columns:96px 1fr;gap:12px;padding:7px 0;border-bottom:1px dashed var(--line);font-size:.86rem}
+.timeline li:last-child{border-bottom:0}
+.timeline .t-d{color:var(--muted);font-variant-numeric:tabular-nums}
+.timeline .t-a{font-weight:600}
+
+/* Cajón y diálogos */
+.scrim{position:fixed;inset:0;background:rgba(10,18,26,.45);z-index:40}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(860px,100%);background:var(--bg);z-index:41;display:grid;grid-template-rows:auto auto 1fr;box-shadow:var(--shadow);border-left:1px solid var(--line)}
+.drawer-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;padding:18px 22px 10px;background:var(--surface);border-bottom:1px solid var(--line)}
+.drawer-head .d-title{display:grid;gap:6px}
+.drawer-actions{display:flex;flex-wrap:wrap;gap:8px;padding:10px 22px;background:var(--surface);border-bottom:1px solid var(--line)}
+.drawer-actions:empty{padding:0;border:0}
+.drawer-body{overflow:auto;padding:18px 22px 40px;display:grid;gap:16px;align-content:start}
+.icon-btn{border:1px solid var(--line);background:var(--surface);width:34px;height:34px;border-radius:8px;cursor:pointer;font-size:1.2rem;line-height:1;flex:none}
+.dialog{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(520px,calc(100% - 32px));max-height:calc(100% - 32px);overflow:auto;background:var(--surface);border-radius:12px;border:1px solid var(--line);box-shadow:var(--shadow);z-index:61;padding:20px 22px;display:grid;gap:14px}
+#modal-root .scrim{z-index:60}
+.dialog.wide{width:min(780px,calc(100% - 32px))}
+.login-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.login-grid .card{background:var(--surface-2)}
+.accounts{display:grid;gap:6px;max-height:52vh;overflow:auto;padding-right:4px}
+.accounts h4{margin:8px 0 2px;font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.acct{display:flex;align-items:center;gap:12px;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);cursor:pointer;text-align:left;width:100%}
+.acct:hover{border-color:var(--accent)}
+.acct .av{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:var(--accent-soft);color:var(--accent);font-weight:700;font-size:.8rem;flex:none}
+.acct .a-n{font-weight:600;display:block}
+.acct .a-m{font-size:.8rem;color:var(--muted)}
+.perm{width:100%;border-collapse:collapse;font-size:.88rem}
+.perm th,.perm td{text-align:left;vertical-align:top;padding:9px 10px;border-bottom:1px solid var(--line)}
+.perm th{font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);background:var(--surface-2)}
+.dlg-body{display:grid;gap:12px;font-size:.92rem}
+.dlg-actions{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap}
+.calc{display:grid;grid-template-columns:1fr auto auto;gap:4px 14px;font-variant-numeric:tabular-nums;font-size:.92rem}
+.calc .tot{font-weight:700;border-top:1px solid var(--line);padding-top:6px}
+#toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:8px;font-size:.9rem;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:80;max-width:calc(100% - 32px)}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* Configuración */
+.cfg-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.wtable{width:100%;border-collapse:collapse;font-size:.9rem}
+.wtable th,.wtable td{padding:6px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.wtable th{font-size:.75rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+.wtable input{width:100%;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+.wtable input[type="number"]{width:72px}
+.sum-ok{color:var(--ok);font-weight:600}
+.sum-bad{color:var(--crit);font-weight:600}
+
+details.mx summary{cursor:pointer;color:var(--accent);font-weight:500;font-size:.9rem}
+details.mx[open] summary{margin-bottom:10px}
+
+@media (max-width: 900px){
+  .split,.two{grid-template-columns:1fr}
+  .roles{margin-left:0}
+}
+@media (max-width: 640px){
+  .stepper{grid-template-columns:repeat(4,1fr);row-gap:14px}
+  .stepper li:nth-child(5)::before{display:none}
+  .timeline li{grid-template-columns:1fr;gap:0}
+  .drawer-head,.drawer-actions,.drawer-body{padding-left:16px;padding-right:16px}
+  .card{padding:16px}
+}
+@media (prefers-reduced-motion: reduce){*{transition:none !important}}
+</style>
+</head>
+<body>
+<header class="appbar">
+  <div class="brand">
+    <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><rect width="34" height="34" rx="8" fill="var(--accent)"/><circle cx="9" cy="23" r="3" fill="var(--accent-ink)"/><circle cx="17" cy="15" r="3" fill="var(--accent-ink)"/><circle cx="25" cy="10" r="3" fill="var(--accent-ink)"/><path d="M9 23 17 15 25 10" stroke="var(--accent-ink)" stroke-width="2" fill="none"/></svg>
+    <div><div class="brand-name">Prácticas ICIF</div><div class="brand-sub">Ingeniería Civil Informática · USS, Sede De la Patagonia</div></div>
+  </div>
+  <div class="whoami" id="whoami"></div>
+</header>
+<div class="proto-bar" id="pilot-bar" hidden></div>
+<main id="app"></main>
+<div id="drawer-root"></div>
+<div id="modal-root"></div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script src="supabase.js"></script>
+<script src="config.js"></script>
+<script>
+'use strict';
+/* ===================== Utilidades ===================== */
+const UIKEY = 'practicas-icif-ui-v1';
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const last = a => (a && a.length) ? a[a.length - 1] : null;
+const clone = o => JSON.parse(JSON.stringify(o));
+const pad = n => String(n).padStart(2, '0');
+const iso = d => d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+const parseD = s => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
+const TODAY = iso(new Date());
+const daysBetween = (a, b) => Math.round((parseD(b) - parseD(a)) / 86400000);
+function businessDaysBetween(a, b) { // días hábiles entre a y b, sin contar ninguno de los dos (no descuenta feriados)
+  let n = 0; const d = parseD(a); const end = parseD(b); d.setDate(d.getDate() + 1);
+  while (d < end) { const w = d.getDay(); if (w !== 0 && w !== 6) n++; d.setDate(d.getDate() + 1); }
+  return n;
+}
+const MESES = ['ene','feb','mar','abr','may','jun','jul','ago','sept','oct','nov','dic'];
+const fmtD = s => { if (!s) return '—'; const d = parseD(s); return d.getDate() + ' ' + MESES[d.getMonth()] + ' ' + d.getFullYear(); };
+const fmtN = n => (n == null || isNaN(n)) ? '—' : n.toFixed(1).replace('.', ',');
+const fmtSize = b => b >= 1048576 ? (b / 1048576).toFixed(1).replace('.', ',') + ' MB' : Math.max(1, Math.round(b / 1024)) + ' KB';
+const redondear = x => Math.round(x * 10 + 1e-9) / 10;
+const uid = () => Math.random().toString(36).slice(2, 10);
+
+function rutDV(num) {
+  const s = String(num); let sum = 0, m = 2;
+  for (let i = s.length - 1; i >= 0; i--) { sum += Number(s[i]) * m; m = m === 7 ? 2 : m + 1; }
+  const r = 11 - (sum % 11); return r === 11 ? '0' : r === 10 ? 'K' : String(r);
+}
+const rutFmt = num => String(num).replace(/\B(?=(\d{3})+(?!\d))/g, '.') + '-' + rutDV(num);
+function rutValido(str) {
+  const c = String(str || '').replace(/[.\s]/g, '').toUpperCase();
+  const m = c.match(/^(\d{7,8})-?([\dK])$/); return !!m && rutDV(m[1]) === m[2];
+}
+const emailValido = s => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(s || '').trim());
+
+/* ===================== Reglas de la carrera ===================== */
+const MALLAS = {
+  '2019': { label: 'Malla 2019 (Plan 2020)', decreto: 'D.R. N° 68/2019, ajustado por D.R. N° 105/2019' },
+  '2024': { label: 'Malla 2024', decreto: 'D.R. N° 71/2023' }
+};
+const TIPOS = {
+  industrial: {
+    nombre: 'Práctica Industrial', corto: 'Industrial', acercamiento: 'primer',
+    codigo: { '2019': 'ICIF G001', '2024': 'ICIF G007' },
+    sct: { '2019': 7, '2024': 6 },
+    momento: { '2019': '6° semestre TAV', '2024': 'Intersemestre del 6° semestre' },
+    semestre: 'sexto',
+    req: { '2019': 'INGE 1420 Taller de Programación Aplicada, ICIF E001 Estructura de Datos y Algoritmos e INGE 1426 Taller de Emprendimiento e Innovación I aprobados.', '2024': 'Nivel 5° aprobado.' },
+    ra: { '2019': 'Caracteriza el campo laboral y las principales tareas asociadas a la profesión en una empresa, donde aplica las ciencias básicas y ciencias de la ingeniería.',
+          '2024': 'Aplica conocimientos y habilidades adquiridas en su formación a situaciones laborales propias al quehacer de la profesión.' },
+    nivelMin: 5
+  },
+  profesional: {
+    nombre: 'Práctica Profesional', corto: 'Profesional', acercamiento: 'segundo',
+    codigo: { '2019': 'ICIF I001', '2024': 'ICIF I006' },
+    sct: { '2019': 7, '2024': 6 },
+    momento: { '2019': '8° semestre TAV', '2024': 'Intersemestre del 8° semestre' },
+    semestre: 'octavo',
+    req: { '2019': 'ICIF G001 Práctica Industrial, ICIF G002 Sistemas Operativos e ICIF G003 Aplicaciones y Tecnologías de la Web aprobados.', '2024': 'Nivel 7° aprobado.' },
+    ra: { '2019': 'Desarrolla procesos técnicos y de especialidad de la ingeniería civil informática en el contexto real de las necesidades de una empresa, organización o proyecto.',
+          '2024': 'Propone soluciones a problemas propios de la carrera, utilizando herramientas de ingeniería con criterio ético, responsabilidad y rigurosidad.' },
+    nivelMin: 7
+  }
+};
+const codigo = p => TIPOS[p.tipo].codigo[est(p).malla];
+const raBlock = p => { const e = est(p); return `<div class="callout tone-info"><strong>Resultado de aprendizaje · ${codigo(p)} (${MALLAS[e.malla].decreto})</strong><p>${esc(TIPOS[p.tipo].ra[e.malla])}</p></div>`; };
+
+const NIVELES = [
+  { n: 1, l: 'Insuficiente', d: 'No alcanza lo esperado' },
+  { n: 2, l: 'En desarrollo', d: 'Lo logra en parte, con apoyo frecuente' },
+  { n: 3, l: 'Logrado', d: 'Cumple lo esperado para su nivel' },
+  { n: 4, l: 'Destacado', d: 'Supera lo esperado para su nivel' }
+];
+
+function matricesBase() {
+  return {
+    industrial: {
+      empresa: [
+        { id: 'ie1', nombre: 'Responsabilidad y puntualidad', desc: 'Cumple horarios, avisa ausencias y responde por sus compromisos.', peso: 15 },
+        { id: 'ie2', nombre: 'Cumplimiento de tareas asignadas', desc: 'Completa las tareas en plazo y con la calidad pedida.', peso: 15 },
+        { id: 'ie3', nombre: 'Aplicación de conocimientos técnicos', desc: 'Usa lo aprendido en la carrera (programación, bases de datos, redes).', peso: 15 },
+        { id: 'ie4', nombre: 'Disposición a aprender y adaptarse', desc: 'Incorpora herramientas y procesos nuevos de la organización.', peso: 15 },
+        { id: 'ie5', nombre: 'Trabajo en equipo', desc: 'Colabora y mantiene buenas relaciones con el equipo.', peso: 10 },
+        { id: 'ie6', nombre: 'Comunicación oral y escrita', desc: 'Informa avances y dudas con claridad.', peso: 10 },
+        { id: 'ie7', nombre: 'Iniciativa', desc: 'Propone mejoras y busca soluciones antes de pedir ayuda.', peso: 10 },
+        { id: 'ie8', nombre: 'Normas, seguridad y confidencialidad', desc: 'Respeta reglamentos internos y el manejo de la información.', peso: 10 }
+      ],
+      academico: [
+        { id: 'ia1', nombre: 'Estructura y formato', desc: 'Sigue la pauta: portada, índice, secciones y anexos.', peso: 15 },
+        { id: 'ia2', nombre: 'Organización y área TI', desc: 'Describe el rubro, la estructura y el rol del área donde trabajó.', peso: 15 },
+        { id: 'ia3', nombre: 'Actividades realizadas', desc: 'Detalla tareas, herramientas y resultados, con evidencias.', peso: 25 },
+        { id: 'ia4', nombre: 'Relación con la formación', desc: 'Vincula las actividades con asignaturas de la malla.', peso: 20 },
+        { id: 'ia5', nombre: 'Reflexión sobre aprendizajes', desc: 'Identifica lo aprendido, dificultades y aspectos a mejorar.', peso: 15 },
+        { id: 'ia6', nombre: 'Redacción y ortografía', desc: 'Escritura clara y técnica; cita sus fuentes.', peso: 10 }
+      ]
+    },
+    profesional: {
+      empresa: [
+        { id: 'pe1', nombre: 'Calidad técnica de las soluciones', desc: 'Analiza, diseña y desarrolla soluciones correctas y mantenibles.', peso: 20 },
+        { id: 'pe2', nombre: 'Autonomía y resolución de problemas', desc: 'Enfrenta problemas nuevos con poca supervisión.', peso: 15 },
+        { id: 'pe3', nombre: 'Planificación y plazos', desc: 'Organiza su trabajo y cumple lo comprometido.', peso: 10 },
+        { id: 'pe4', nombre: 'Metodologías y buenas prácticas', desc: 'Control de versiones, pruebas, documentación, metodología de desarrollo.', peso: 10 },
+        { id: 'pe5', nombre: 'Comunicación técnica', desc: 'Explica decisiones técnicas al equipo y a usuarios.', peso: 10 },
+        { id: 'pe6', nombre: 'Trabajo en equipo y liderazgo', desc: 'Coordina tareas y apoya a otros integrantes.', peso: 10 },
+        { id: 'pe7', nombre: 'Responsabilidad y compromiso', desc: 'Cumple horarios y se hace cargo de sus entregables.', peso: 10 },
+        { id: 'pe8', nombre: 'Ética y confidencialidad', desc: 'Maneja con reserva la información y los accesos.', peso: 5 },
+        { id: 'pe9', nombre: 'Aporte a la organización', desc: 'Su trabajo deja un resultado útil para la empresa.', peso: 10 }
+      ],
+      academico: [
+        { id: 'pa1', nombre: 'Contexto y problema abordado', desc: 'Presenta la organización y define el problema con claridad.', peso: 15 },
+        { id: 'pa2', nombre: 'Solución técnica y fundamentación', desc: 'Justifica el diseño y las decisiones técnicas.', peso: 25 },
+        { id: 'pa3', nombre: 'Metodología y herramientas', desc: 'Explica cómo trabajó y con qué tecnologías.', peso: 15 },
+        { id: 'pa4', nombre: 'Resultados e impacto', desc: 'Muestra resultados medibles y su efecto en la organización.', peso: 15 },
+        { id: 'pa5', nombre: 'Vínculo con el perfil de egreso', desc: 'Relaciona su trabajo con las competencias de la carrera.', peso: 10 },
+        { id: 'pa6', nombre: 'Conclusiones y reflexión crítica', desc: 'Evalúa su desempeño y propone mejoras.', peso: 10 },
+        { id: 'pa7', nombre: 'Redacción, formato y referencias', desc: 'Escritura técnica correcta y fuentes citadas.', peso: 10 }
+      ]
+    }
+  };
+}
+
+/* Escala chilena 1,0–7,0 con exigencia configurable (por defecto 60 % para el 4,0) */
+function notaDesde(criterios, niveles, exigenciaPct) {
+  let tot = 0, got = 0;
+  for (const c of criterios) {
+    const n = niveles[c.id]; if (!n) return null;
+    tot += Number(c.peso) || 0; got += (Number(c.peso) || 0) * n / 4;
+  }
+  if (!tot) return null;
+  const p = got / tot, e = exigenciaPct / 100;
+  const nota = p < e ? 1 + 3 * p / e : 4 + 3 * (p - e) / (1 - e);
+  return redondear(Math.min(7, Math.max(1, nota)));
+}
+function notaFinal(p) {
+  if (!p.evalEmpresa || !p.evalAcademico) return null;
+  const w = state.config.ponderacion[p.tipo];
+  return redondear(p.evalEmpresa.nota * w.empresa / 100 + p.evalAcademico.nota * w.academico / 100);
+}
+
+/* ===================== Etapas y alertas ===================== */
+const ETAPAS = {
+  busqueda:      { label: 'Buscando empresa',          tone: 'neutral', orden: -1, corto: 'Buscando empresa' },
+  borrador:      { label: 'Formulario en preparación', tone: 'neutral', orden: 0, corto: 'Formulario' },
+  solicitada:    { label: 'Activación solicitada',     tone: 'info',    orden: 1, corto: 'Por activar' },
+  activada:      { label: 'Activada · seguro pendiente', tone: 'warn',  orden: 2, corto: 'Seguro pendiente' },
+  lista:         { label: 'Lista para iniciar',        tone: 'accent',  orden: 3, corto: 'Por iniciar' },
+  en_curso:      { label: 'En curso',                  tone: 'accent',  orden: 4, corto: 'En curso' },
+  correcciones:  { label: 'Informe con observaciones', tone: 'warn',    orden: 5, corto: 'Observaciones' },
+  en_evaluacion: { label: 'En evaluación',             tone: 'info',    orden: 6, corto: 'En evaluación' },
+  por_cerrar:    { label: 'Lista para cierre',         tone: 'ok',      orden: 7, corto: 'Por cerrar' },
+  cerrada:       { label: 'Cerrada',                   tone: 'ok',      orden: 8, corto: 'Cerradas' }
+};
+const devPendiente = p => { const d = last(p.devoluciones); return d && !d.resuelta ? d : null; };
+function etapa(p) {
+  if (p.cierre) return 'cerrada';
+  if (!p.solicitud) return p.empresa.razon ? 'borrador' : 'busqueda';
+  if (!p.activacion) return 'solicitada';
+  if (!p.seguro) return 'activada';
+  if (devPendiente(p)) return 'correcciones';
+  if (!p.informes.length) return TODAY < p.inicio ? 'lista' : 'en_curso';
+  if (p.evalEmpresa && p.evalAcademico) return 'por_cerrar';
+  return 'en_evaluacion';
+}
+function alertas(p) {
+  const a = []; const e = etapa(p);
+  if (e === 'solicitada') {
+    const bd = businessDaysBetween(p.solicitud.fecha, p.inicio);
+    if (bd < 10) a.push({ sev: 'warn', txt: `Solicitada con ${bd} días hábiles de anticipación (mínimo 10).` });
+    const [, m, d] = p.solicitud.fecha.split('-').map(Number);
+    if ((m === 1 && d > 15) || m === 2) a.push({ sev: 'warn', txt: 'Solicitud enviada después del 15 de enero.' });
+  }
+  if ((e === 'solicitada' || e === 'activada') && p.inicio <= TODAY) {
+    a.push({ sev: 'crit', txt: `Llegó la fecha de inicio (${fmtD(p.inicio)}) sin seguro emitido. No debe comenzar.` });
+  } else if (e === 'activada') {
+    const d = daysBetween(TODAY, p.inicio);
+    if (d <= 7) a.push({ sev: 'warn', txt: `Seguro pendiente y la práctica inicia en ${d} día${d === 1 ? '' : 's'}.` });
+  }
+  if (p.seguro && !p.cierre) {
+    if (p.termino < TODAY && !p.evalEmpresa) {
+      const d = daysBetween(p.termino, TODAY);
+      a.push({ sev: d > 30 ? 'crit' : 'warn', txt: `La empresa no ha evaluado (la práctica terminó hace ${d} días).` });
+    }
+    if (p.termino < TODAY && !p.informes.length) {
+      const d = daysBetween(p.termino, TODAY);
+      if (d > 14) a.push({ sev: 'warn', txt: `Informe no entregado (terminó hace ${d} días).` });
+    }
+    const inf = last(p.informes);
+    if (inf && !p.evalAcademico && !devPendiente(p)) {
+      const d = daysBetween(inf.fecha, TODAY);
+      if (d > 10) a.push({ sev: 'warn', txt: `Informe sin evaluación académica hace ${d} días.` });
+    }
+  }
+  if (e === 'por_cerrar') a.push({ sev: 'info', txt: 'Ambas evaluaciones registradas: lista para cierre.' });
+  (p.cartas || []).filter(c => c.estado === 'solicitada').forEach(c => {
+    const d = daysBetween(c.fechaSolicitud, TODAY);
+    a.push({ sev: d > 3 ? 'warn' : 'info', txt: `Pidió una carta de presentación para ${c.empresa || 'uso general'} (${d === 0 ? 'hoy' : `hace ${d} día${d === 1 ? '' : 's'}`}).` });
+  });
+  return a;
+}
+const SEV_ORD = { crit: 0, warn: 1, info: 2 };
+const enPreparacion = e => e === 'busqueda' || e === 'borrador';
+
+function addDaysIso(s, n) { const d = parseD(s); d.setDate(d.getDate() + n); return iso(d); }
+
+/* ===================== Estado y conexión ===================== */
+function loadUI() {
+  const def = { role: 'director', person: { estudiante: '', empresa: '', academico: '' },
+    dir: { tab: 'panel', q: '', tipo: '', etapa: '', acad: '' }, sel: { empresa: null, academico: null }, acaFiltro: 'pend', mxEdit: 'industrial.empresa' };
+  try { const s = localStorage.getItem(UIKEY); if (s) { const o = JSON.parse(s); return Object.assign(def, o, { dir: Object.assign(def.dir, o.dir || {}), person: def.person, role: def.role }); } } catch (e) {}
+  return def;
+}
+let state = null;
+let ui = loadUI();
+ui.dirSel = null; ui.formErrors = {}; ui.drafts = {}; ui.auth = { step: 'email', email: '' }; ui.cargaTxt = '';
+function saveUI() {
+  try { const { dir, sel, acaFiltro, mxEdit } = ui; localStorage.setItem(UIKEY, JSON.stringify({ dir, sel, acaFiltro, mxEdit })); } catch (e) {}
+}
+const byId = id => state.practicas.find(p => p.id === id);
+const est = p => state.estudiantes.find(e => e.id === p.estudianteId) || { id: p.estudianteId, nombre: p.estudianteId, rut: '', malla: '2024', nivel: 0, correo: p.estudianteId, telefono: '' };
+const acad = id => state.academicos.find(a => a.id === id);
+const acadNombre = id => (acad(id) || {}).nombre || 'Sin asignar';
+const practicaDe = email => { const ps = state.practicas.filter(p => p.estudianteId === email); return ps.find(p => !p.cierre) || ps[ps.length - 1] || null; };
+const ROLE_MAP = { direccion: 'director', docente: 'academico', supervisor: 'empresa', estudiante: 'estudiante' };
+const ROLE_LABEL = { direccion: 'Dirección de carrera', docente: 'Docente corrector/a', supervisor: 'Supervisor/a de empresa', estudiante: 'Estudiante' };
+
+const CFG = window.APP_CONFIG || {};
+const configurado = !!(CFG.supabaseUrl && CFG.supabaseKey && !/TU_PROYECTO|PEGA_AQUI/.test(CFG.supabaseUrl + CFG.supabaseKey));
+const sb = (configurado && window.supabase) ? window.supabase.createClient(CFG.supabaseUrl, CFG.supabaseKey,
+  { auth: { flowType: 'implicit', detectSessionInUrl: true, persistSession: true, autoRefreshToken: true } }) : null;
+let session = null, cargando = true, errorCarga = '';
+const siteUrl = () => location.origin + location.pathname;
+
+let reloadP = null;
+function reload() {
+  if (reloadP) return reloadP;
+  reloadP = (async () => {
+    const { data, error } = await sb.rpc('estado');
+    cargando = false;
+    if (error) { errorCarga = error.message || 'Error de conexión.'; state = null; }
+    else {
+      errorCarga = ''; state = data;
+      if (state && state.yo) { ui.role = ROLE_MAP[state.yo.rol]; ui.person[ui.role] = state.yo.email; }
+    }
+    if (/access_token|error_description/.test(location.hash)) { try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {} }
+    render();
+  })().finally(() => { reloadP = null; });
+  return reloadP;
+}
+async function call(fn, args, okMsg) {
+  const { data, error } = await sb.rpc(fn, args);
+  if (error) { toast(error.message || 'No se pudo completar la acción.'); return { ok: false }; }
+  await reload();
+  if (okMsg) toast(typeof okMsg === 'function' ? okMsg(data) : okMsg);
+  return { ok: true, data };
+}
+async function enviarAcceso(email) {
+  const { error } = await sb.auth.signInWithOtp({ email, options: { shouldCreateUser: true, emailRedirectTo: siteUrl() } });
+  return error ? (error.message || 'error desconocido') : null;
+}
+
+/* Guardado automático del formulario del estudiante */
+let borradorPend = null, borradorPid = null, borradorT = null;
+function deepMerge(a, b) { for (const k in b) { if (b[k] && typeof b[k] === 'object' && !Array.isArray(b[k])) a[k] = deepMerge(a[k] || {}, b[k]); else a[k] = b[k]; } return a; }
+function setSaveStatus(t) { const el = $('#save-status'); if (el) el.textContent = t; }
+function queueBorrador(pid, patch) {
+  if (borradorPid && borradorPid !== pid) flushBorrador();
+  borradorPid = pid; borradorPend = deepMerge(borradorPend || {}, patch);
+  setSaveStatus('Guardando…'); clearTimeout(borradorT); borradorT = setTimeout(flushBorrador, 700);
+}
+async function flushBorrador() {
+  clearTimeout(borradorT);
+  if (!borradorPend) return true;
+  const pid = borradorPid, datos = borradorPend; borradorPend = null;
+  const { error } = await sb.rpc('guardar_borrador', { p_id: pid, p_datos: datos });
+  if (error) { setSaveStatus('No se pudo guardar'); toast(error.message); return false; }
+  setSaveStatus('Cambios guardados'); return true;
+}
+function pathToPatch(path, value) {
+  if (path.startsWith('ck.')) return { checklist: { [path.slice(3)]: value } };
+  const parts = path.split('.');
+  if (parts[0] === 'e') return { estudiante: { [parts[1]]: value } };
+  const rest = parts.slice(1);
+  return rest.length === 1 ? { [rest[0]]: value } : { [rest[0]]: { [rest[1]]: value } };
+}
+/* Guardado automático de la configuración */
+let cfgT = null;
+function queueConfig() {
+  const el = $('#cfg-status'); if (el) el.textContent = 'Guardando…';
+  clearTimeout(cfgT);
+  cfgT = setTimeout(async () => {
+    const { error } = await sb.rpc('guardar_config', { p_data: state.config });
+    const e2 = $('#cfg-status'); if (e2) e2.textContent = error ? 'No se pudo guardar: ' + error.message : 'Cambios guardados';
+  }, 800);
+}
+
+/* ===================== Descargas ===================== */
+function offerFile(filename, data) {
+  const blob = data instanceof Blob ? data : new Blob([data]);
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = filename;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+}
+/* ——— PDF mínimo (Helvetica, WinAnsi) ——— */
+const HW = { ' ':278,'!':278,'"':355,'#':556,'$':556,'%':889,'&':667,"'":191,'(':333,')':333,'*':389,'+':584,',':278,'-':333,'.':278,'/':278,':':278,';':278,'<':584,'=':584,'>':584,'?':556,'@':1015,
+  A:667,B:667,C:722,D:722,E:667,F:611,G:778,H:722,I:278,J:500,K:667,L:556,M:833,N:722,O:778,P:667,Q:778,R:722,S:667,T:611,U:722,V:667,W:944,X:667,Y:667,Z:611,
+  '[':278,'\\':278,']':278,'^':469,'_':556,'`':333,a:556,b:556,c:500,d:556,e:556,f:278,g:556,h:556,i:222,j:222,k:500,l:222,m:833,n:556,o:556,p:556,q:556,r:333,s:500,t:278,u:556,v:500,w:722,x:500,y:500,z:500,
+  '{':334,'|':260,'}':334,'~':584,'·':278,'°':400,'º':365,'ª':370,'¿':611,'¡':333,'«':556,'»':556 };
+for (let d = 0; d < 10; d++) HW[String(d)] = 556;
+const pdfLatin = s => String(s ?? '').normalize('NFC').replace(/[–—]/g, '-').replace(/[“”]/g, '"').replace(/[‘’]/g, "'").replace(/[^\x00-\xFF]/g, '?');
+const pdfEsc = s => pdfLatin(s).replace(/\\/g, '\\\\').replace(/\(/g, '\\(').replace(/\)/g, '\\)');
+function textW(s, size, bold) {
+  let w = 0;
+  for (const ch of pdfLatin(s)) { let v = HW[ch]; if (v == null) v = HW[ch.normalize('NFD')[0]] ?? 556; w += v; }
+  return w * size / 1000 * (bold ? 1.08 : 1);
+}
+function wrapLines(txt, size, bold, maxW) {
+  const words = pdfLatin(txt).split(/\s+/).filter(Boolean); const lines = []; let cur = '';
+  for (const w of words) { const t = cur ? cur + ' ' + w : w; if (!cur || textW(t, size, bold) <= maxW) cur = t; else { lines.push(cur); cur = w; } }
+  if (cur) lines.push(cur); return lines;
+}
+function pageWriter() {
+  const ops = [];
+  const api = {
+    text(x, y, s, o = {}) { const { size = 11, bold = false, gray = 0, tw = 0 } = o; ops.push(`${gray} g BT /${bold ? 'F2' : 'F1'} ${size} Tf ${tw.toFixed(3)} Tw ${x.toFixed(2)} ${y.toFixed(2)} Td (${pdfEsc(s)}) Tj ET`); },
+    right(xr, y, s, o = {}) { api.text(xr - textW(s, o.size || 11, o.bold), y, s, o); },
+    center(xc, y, s, o = {}) { api.text(xc - textW(s, o.size || 11, o.bold) / 2, y, s, o); },
+    line(x1, y1, x2, y2, wd = 0.5, gray = 0) { ops.push(`${gray} G ${wd} w ${x1} ${y1} m ${x2} ${y2} l S`); },
+    para(x, y, txt, maxW, o = {}) {
+      const { size = 11, lead = size * 1.42, justify = true, bold = false, gray = 0 } = o;
+      const lines = wrapLines(txt, size, bold, maxW);
+      lines.forEach((l, i) => {
+        let tw = 0;
+        if (justify && i < lines.length - 1) { const sp = (l.match(/ /g) || []).length; if (sp) tw = (maxW - textW(l, size, bold)) / sp; }
+        api.text(x, y, l, { size, bold, gray, tw }); y -= lead;
+      });
+      return y;
+    },
+    content: () => ops.join('\n') + '\n'
+  };
+  return api;
+}
+function makePdf(content, w = 595, h = 842) {
+  const objs = ['<< /Type /Catalog /Pages 2 0 R >>', '<< /Type /Pages /Kids [3 0 R] /Count 1 >>',
+    `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${w} ${h}] /Resources << /Font << /F1 5 0 R /F2 6 0 R >> >> /Contents 4 0 R >>`,
+    `<< /Length ${content.length} >>\nstream\n${content}endstream`,
+    '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>',
+    '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>'];
+  let out = '%PDF-1.4\n'; const offs = [];
+  objs.forEach((o, i) => { offs.push(out.length); out += `${i + 1} 0 obj\n${o}\nendobj\n`; });
+  const xref = out.length;
+  out += `xref\n0 ${objs.length + 1}\n0000000000 65535 f \n` + offs.map(o => String(o).padStart(10, '0') + ' 00000 n \n').join('');
+  out += `trailer\n<< /Size ${objs.length + 1} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`;
+  const bytes = new Uint8Array(out.length); for (let i = 0; i < out.length; i++) bytes[i] = out.charCodeAt(i) & 255;
+  return bytes;
+}
+const MESES_L = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+const fechaLarga = s => { const d = parseD(s); return `${d.getDate()} de ${MESES_L[d.getMonth()]} de ${d.getFullYear()}`; };
+
+/* Carta de presentación: tamaño carta (612 × 792 pt), márgenes de 1 pulgada */
+function cartaPdf(p, c) {
+  const cfg = state.config.carta; const e = est(p); const T = TIPOS[p.tipo];
+  const W = 612, H = 792, L = 72, R = W - 72, MW = R - L;
+  const parrafos = [
+    `Por medio de la presente, la Dirección de Carrera de ${cfg.unidad} de la Universidad San Sebastián, ${cfg.sede}, presenta a ${e.nombre}, RUT ${e.rut}, estudiante regular de nuestra carrera, quien está en condiciones de realizar su ${T.nombre} (${T.codigo[e.malla]}) y busca hacerlo en ${c.empresa || 'su organización'}.`,
+    `Esta práctica, de ${T.sct[e.malla]} créditos SCT, se realiza al término del ${T.semestre} semestre y representa el ${T.acercamiento} acercamiento del estudiante al mundo laboral. Según el plan de estudios (${MALLAS[e.malla].decreto}), su resultado de aprendizaje es: «${T.ra[e.malla]}» El estudiante participará en los procesos y actividades que la organización le asigne, cumpliendo los horarios establecidos.`,
+    'Si su organización acepta recibir al estudiante, la carrera formalizará la práctica: enviará a la empresa la información necesaria y gestionará el seguro de práctica, que se emite antes del inicio de las actividades. Las fechas y la jornada se acuerdan con la empresa. La evaluación es mixta: considera la del supervisor o supervisora en la empresa, mediante una breve pauta en línea, y la del docente corrector asignado por la carrera.',
+    cfg.legal ? 'De acuerdo con el inciso tercero del artículo 8° del Código del Trabajo, los servicios que presta un estudiante para cumplir con el requisito de práctica no dan origen a un contrato de trabajo.' : null,
+    `Agradecemos de antemano su disposición a colaborar con la formación de nuestros estudiantes. Para coordinar la práctica o resolver dudas, puede escribir a ${cfg.correo}${cfg.telefono ? ' o llamar al ' + cfg.telefono : ''}.`
+  ].filter(Boolean);
+  const dest = c.destinatario ? ['Señor(a)', c.destinatario, c.cargo, c.empresa, 'Presente'].filter(Boolean)
+    : c.empresa ? ['Señores', c.empresa, 'Presente'] : ['A quien corresponda'];
+  function layout(size) {
+    const pw = pageWriter(); const lead = size * 1.45; let y = H - 64;
+    pw.text(L, y, 'UNIVERSIDAD SAN SEBASTIÁN', { size: 12, bold: true });
+    pw.text(L, y - 15, 'Facultad de Ingeniería · ' + cfg.unidad, { size: 9.5, gray: 0.3 });
+    pw.text(L, y - 28, cfg.sede, { size: 9.5, gray: 0.3 });
+    pw.right(R, y, 'Carta N° ' + c.folio, { size: 9.5, bold: true });
+    pw.right(R, y - 15, 'Código de verificación ' + c.codigo, { size: 9.5, gray: 0.3 });
+    y -= 42; pw.line(L, y, R, y, 0.8, 0.55); y -= 30;
+    pw.right(R, y, `${cfg.ciudad}, ${fechaLarga(c.fechaEmision)}`, { size }); y -= lead * 2;
+    dest.forEach(l => { pw.text(L, y, l, { size }); y -= lead; });
+    y -= lead * 0.6;
+    pw.text(L, y, 'De nuestra consideración:', { size }); y -= lead * 1.5;
+    parrafos.forEach(t => { y = pw.para(L, y, t, MW, { size, lead }); y -= lead * 0.55; });
+    y -= lead * 0.3;
+    pw.text(L, y, 'Saluda atentamente,', { size });
+    y -= 62; const cx = (L + R) / 2;
+    pw.line(cx - 110, y, cx + 110, y, 0.6, 0.2); y -= 15;
+    if (cfg.firmante) { pw.center(cx, y, cfg.firmante, { size: 10.5, bold: true }); y -= 13.5; }
+    pw.center(cx, y, cfg.cargo, { size: 10, bold: !cfg.firmante }); y -= 13;
+    pw.center(cx, y, cfg.unidad, { size: 10, gray: 0.25 }); y -= 13;
+    pw.center(cx, y, 'Universidad San Sebastián, ' + cfg.sede, { size: 10, gray: 0.25 });
+    const yEnd = y;
+    pw.line(L, 58, R, 58, 0.5, 0.75);
+    pw.text(L, 46, `Carta N° ${c.folio} · Código de verificación ${c.codigo} · Válida hasta el ${fechaLarga(c.vence)}.`, { size: 8, gray: 0.4 });
+    pw.text(L, 35, `Para confirmar su autenticidad, escriba a ${cfg.correo} indicando el código de verificación.`, { size: 8, gray: 0.4 });
+    return { pw, yEnd };
+  }
+  let r = null;
+  for (const size of [11, 10.5, 10, 9.5]) { r = layout(size); if (r.yEnd > 66) break; }
+  return makePdf(r.pw.content(), W, H);
+}
+function nombreArchivoCarta(p, c) {
+  const ap = est(p).nombre.split(' ').slice(-2, -1)[0] || 'estudiante';
+  return `Carta_presentacion_${c.folio}_${ap}.pdf`.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^\w.\-]/g, '_');
+}
+function exportCSV() {
+  const head = ['Estudiante', 'RUT', 'Malla', 'Tipo', 'Código', 'NRC', 'Período', 'Inicio', 'Término', 'Empresa', 'Supervisor/a', 'Académico/a', 'Etapa', 'Nota empresa', 'Nota académica', 'Nota final'];
+  const q = v => '"' + String(v ?? '').replace(/"/g, '""') + '"';
+  const rows = state.practicas.map(p => {
+    const e = est(p);
+    const nf = p.cierre ? p.cierre.nota : notaFinal(p);
+    return [e.nombre, e.rut, e.malla, TIPOS[p.tipo].corto, codigo(p), p.nrc, p.periodo, p.inicio, p.termino, p.empresa.razon, p.supervisor.nombre,
+      acadNombre(p.academicoId), ETAPAS[etapa(p)].label, fmtN(p.evalEmpresa?.nota), fmtN(p.evalAcademico?.nota), fmtN(nf)].map(q).join(';');
+  });
+  offerFile(`practicas_ICIF_${TODAY}.csv`, '﻿' + [head.map(q).join(';'), ...rows].join('\r\n'));
+}
+
+/* ===================== Piezas de interfaz ===================== */
+const chipEtapa = p => { const e = ETAPAS[etapa(p)]; return `<span class="chip tone-${e.tone}">${e.label}</span>`; };
+const chipTipo = p => `<span class="chip plain tone-neutral">${TIPOS[p.tipo].corto}</span>`;
+function stepper(p) {
+  const s = [
+    { k: 'Solicitud', f: p.solicitud?.fecha },
+    { k: 'Activación', f: p.activacion?.fecha },
+    { k: 'Seguro', f: p.seguro?.fecha },
+    { k: 'Informe', f: devPendiente(p) ? null : last(p.informes)?.fecha },
+    { k: 'Ev. empresa', f: p.evalEmpresa?.fecha },
+    { k: 'Ev. académica', f: p.evalAcademico?.fecha },
+    { k: 'Cierre', f: p.cierre?.fecha }
+  ];
+  let cur = s.findIndex(x => !x.f);
+  return `<ol class="stepper" aria-label="Avance de la práctica">${s.map((x, i) => {
+    const cls = x.f ? 'done' : (i === cur ? 'current' : '');
+    return `<li class="${cls}"><span class="dot" aria-hidden="true">${x.f ? '✓' : i + 1}</span><span class="s-l">${x.k}</span><span class="s-d">${x.f ? fmtD(x.f) : (i === cur ? 'pendiente' : '')}</span>${x.f ? '<span class="sr-only">completado</span>' : ''}</li>`;
+  }).join('')}</ol>`;
+}
+function matrizHTML(criterios, niveles, { editable, key } = {}) {
+  return `<div class="matrix-wrap"><table class="matrix"><thead><tr><th scope="col" class="crit-col">Criterio</th><th scope="col" class="w-col">Peso</th>${NIVELES.map(n => `<th scope="col">${n.n} · ${n.l}<small>${n.d}</small></th>`).join('')}</tr></thead><tbody>${criterios.map(c => `<tr data-row="${c.id}"><th scope="row" class="crit-col"><strong>${esc(c.nombre)}</strong>${c.desc ? `<small>${esc(c.desc)}</small>` : ''}</th><td class="w-col">${esc(c.peso)}%</td>${NIVELES.map(n => {
+    const sel = niveles[c.id] === n.n;
+    const inner = editable
+      ? `<label class="lvl-pick"><input type="radio" name="${key}-${c.id}" value="${n.n}" data-mx="${key}" data-cid="${c.id}" ${sel ? 'checked' : ''}><span class="dot" aria-hidden="true">${n.n}</span><span class="sr-only">${esc(c.nombre)}: ${n.l}</span></label>`
+      : (sel ? `<span class="lvl-mark" title="${n.l}">${n.n}</span><span class="sr-only">${n.l}</span>` : '');
+    return `<td class="lvl ${sel ? 'sel' : ''}">${inner}</td>`;
+  }).join('')}</tr>`).join('')}</tbody></table></div>`;
+}
+function fileRows(p, kind, list, { showVersion } = {}) {
+  if (!list.length) return '';
+  return `<div class="files">${list.map((f, i) => {
+    const ext = (f.nombre.split('.').pop() || '').toUpperCase().slice(0, 4);
+    return `<div class="file-row"><span class="f-ico" aria-hidden="true">${esc(ext)}</span><div class="f-main"><span class="f-name">${esc(f.nombre)}</span><span class="f-meta">${showVersion ? `Versión ${f.version} · ` : ''}${fmtSize(f.size)} · subido el ${fmtD(f.fecha)}${f.por ? ' por ' + esc(f.por) : ''}</span></div><button type="button" class="btn small" data-act="dl" data-pid="${p.id}" data-kind="${kind}" data-i="${i}">Descargar</button></div>`;
+  }).reverse().join('')}</div>`;
+}
+function evalBlock(p, rol, { abierta = false } = {}) {
+  const ev = rol === 'empresa' ? p.evalEmpresa : p.evalAcademico;
+  const titulo = rol === 'empresa' ? 'Evaluación de la empresa' : 'Evaluación académica del informe';
+  if (!ev) {
+    const quien = rol === 'empresa' ? p.supervisor.nombre : acadNombre(p.academicoId);
+    return `<section class="card"><div class="card-head"><h3>${titulo}</h3><span class="chip tone-neutral">Pendiente</span></div><p class="note">Aún no registrada por ${esc(quien)}.</p></section>`;
+  }
+  const extra = rol === 'empresa'
+    ? `<dl class="facts"><div><dt>Fortalezas observadas</dt><dd>${esc(ev.fortalezas) || '—'}</dd></div><div><dt>Aspectos a mejorar</dt><dd>${esc(ev.mejoras) || '—'}</dd></div><div><dt>¿Recibiría otro/a estudiante ICIF?</dt><dd>${ev.recibiria === 'si' ? 'Sí' : ev.recibiria === 'no' ? 'No' : '—'}</dd></div></dl>`
+    : `<dl class="facts"><div><dt>Retroalimentación al estudiante</dt><dd>${esc(ev.comentario) || '—'}</dd></div></dl>`;
+  return `<section class="card"><div class="card-head"><h3>${titulo}</h3><span class="chip tone-ok">Registrada</span></div>
+    <div class="score"><span class="big">${fmtN(ev.nota)}</span><span class="lbl">Nota · ${esc(ev.por)} · ${fmtD(ev.fecha)}</span></div>
+    ${extra}
+    <details class="mx" ${abierta ? 'open' : ''}><summary>Ver matriz completa</summary>${matrizHTML(ev.criterios, ev.niveles)}</details></section>`;
+}
+function notaFinalBlock(p) {
+  const w = state.config.ponderacion[p.tipo];
+  const nf = p.cierre ? p.cierre.nota : notaFinal(p);
+  const e = p.evalEmpresa?.nota, a = p.evalAcademico?.nota;
+  return `<div class="calc">
+    <span>Evaluación empresa</span><span>${w.empresa}%</span><span>${fmtN(e)}</span>
+    <span>Evaluación académica</span><span>${w.academico}%</span><span>${fmtN(a)}</span>
+    <span class="tot">Nota final${p.cierre ? ' (cerrada)' : ' (estimada)'}</span><span class="tot"></span><span class="tot">${fmtN(nf)}</span></div>`;
+}
+const factsEstudiante = (p) => { const e = est(p); return `<dl class="facts">
+  <div><dt>Nombre</dt><dd>${esc(e.nombre)}</dd></div><div><dt>RUT</dt><dd class="mono">${esc(e.rut)}</dd></div>
+  <div><dt>Malla</dt><dd>${esc(MALLAS[e.malla].label)}<br><span class="note">${esc(MALLAS[e.malla].decreto)}</span></dd></div><div><dt>Nivel aprobado</dt><dd>${esc(e.nivel)}°</dd></div>
+  <div><dt>Correo</dt><dd>${esc(e.correo)}</dd></div><div><dt>Teléfono</dt><dd>${esc(e.telefono)}</dd></div></dl>`; };
+const factsEmpresa = p => `<dl class="facts">
+  <div><dt>Razón social</dt><dd>${esc(p.empresa.razon) || '—'}</dd></div><div><dt>RUT empresa</dt><dd class="mono">${esc(p.empresa.rut) || '—'}</dd></div>
+  <div><dt>Dirección</dt><dd>${esc(p.empresa.direccion) || '—'}</dd></div><div><dt>Área o unidad TI</dt><dd>${esc(p.empresa.area) || '—'}</dd></div>
+  <div><dt>Representante legal</dt><dd>${esc(p.empresa.rep) || '—'}</dd></div><div><dt>RUT representante</dt><dd class="mono">${esc(p.empresa.rutRep) || '—'}</dd></div></dl>`;
+const factsSupervisor = p => `<dl class="facts">
+  <div><dt>Supervisor/a o jefe directo</dt><dd>${esc(p.supervisor.nombre) || '—'}</dd></div><div><dt>Cargo</dt><dd>${esc(p.supervisor.cargo) || '—'}</dd></div>
+  <div><dt>Correo</dt><dd>${esc(p.supervisor.correo) || '—'}</dd></div><div><dt>Teléfono</dt><dd>${esc(p.supervisor.telefono) || '—'}</dd></div></dl>`;
+const factsPractica = p => `<dl class="facts">
+  <div><dt>Asignatura</dt><dd><span class="mono">${codigo(p)}</span> · ${TIPOS[p.tipo].nombre} · ${TIPOS[p.tipo].sct[est(p).malla]} SCT</dd></div><div><dt>NRC</dt><dd class="mono">${esc(p.nrc) || '—'}</dd></div>
+  <div><dt>Docente corrector/a</dt><dd>${esc(acadNombre(p.academicoId))}</dd></div><div><dt>Período</dt><dd>${esc(p.periodo) || '—'}</dd></div>
+  <div><dt>Inicio</dt><dd>${fmtD(p.inicio)}</dd></div><div><dt>Término</dt><dd>${fmtD(p.termino)}</dd></div>
+  <div><dt>Solicitud enviada</dt><dd>${fmtD(p.solicitud?.fecha)}</dd></div><div><dt>Activación</dt><dd>${fmtD(p.activacion?.fecha)}</dd></div>
+  <div><dt>Seguro de práctica</dt><dd>${p.seguro ? fmtD(p.seguro.fecha) + (p.seguro.folio ? ` · <span class="mono">${esc(p.seguro.folio)}</span>` : '') : 'No emitido'}</dd></div></dl>`;
+const timeline = p => `<ul class="timeline">${[...p.historial].reverse().map(h => `<li><span class="t-d">${fmtD(h.fecha)}</span><span><span class="t-a">${esc(h.actor)}.</span> ${esc(h.texto)}</span></li>`).join('')}</ul>`;
+function devolucionesBlock(p) {
+  if (!p.devoluciones.length) return '';
+  return p.devoluciones.slice().reverse().map(d => `<div class="callout ${d.resuelta ? 'tone-neutral' : 'tone-warn'}"><strong>Observaciones a la versión ${d.version} · ${esc(d.por)} · ${fmtD(d.fecha)}${d.resuelta ? ' · respondidas con una nueva versión' : ''}</strong><p>${esc(d.texto)}</p></div>`).join('');
+}
+function uploadZone(act, pid, texto) {
+  return `<label class="drop" data-drop="${act}" data-pid="${pid}"><input type="file" accept=".pdf,.docx" data-upload="${act}" data-pid="${pid}" aria-label="${esc(texto)}"><strong>${esc(texto)}</strong><span class="note">Arrastra el archivo aquí o haz clic para elegirlo. PDF o Word (.docx), hasta 20 MB.</span></label>`;
+}
+
+/* ===================== Cartas de presentación ===================== */
+function cartaRow(p, c, who) {
+  const vencida = c.estado === 'emitida' && c.vence < TODAY;
+  const chip = c.estado === 'solicitada' ? '<span class="chip tone-info">Solicitada</span>' : c.estado === 'rechazada' ? '<span class="chip tone-crit">Rechazada</span>' : vencida ? '<span class="chip tone-neutral">Vencida</span>' : '<span class="chip tone-ok">Emitida</span>';
+  const para = c.empresa ? esc(c.empresa) + (c.destinatario ? ` · ${esc(c.destinatario)}` : '') : 'Uso general (a quien corresponda)';
+  const meta = c.estado === 'emitida' ? `N° <span class="mono">${esc(c.folio)}</span> · código <span class="mono">${esc(c.codigo)}</span> · emitida el ${fmtD(c.fechaEmision)} · válida hasta el ${fmtD(c.vence)}`
+    : c.estado === 'rechazada' ? `Solicitada el ${fmtD(c.fechaSolicitud)} · ${esc(c.motivo || '')}` : `Solicitada el ${fmtD(c.fechaSolicitud)} · en revisión por la Dirección de Carrera`;
+  let acc = '';
+  if (c.estado === 'emitida') acc = `<button type="button" class="btn small" data-act="carta-dl" data-pid="${p.id}" data-cid="${c.id}">Descargar PDF</button>`;
+  if (c.estado === 'solicitada' && who === 'director') acc = `<button type="button" class="btn small primary" data-act="carta-emit" data-pid="${p.id}" data-cid="${c.id}">Emitir</button><button type="button" class="btn small" data-act="carta-rech" data-pid="${p.id}" data-cid="${c.id}">Rechazar</button>`;
+  const quien = who === 'director' ? `<span class="f-name">${esc(est(p).nombre)} <span class="tag">${TIPOS[p.tipo].corto}</span></span><span class="f-meta">Para: ${para}</span>` : `<span class="f-name">${para}</span>`;
+  return `<div class="file-row"><span class="f-ico" aria-hidden="true">PDF</span><div class="f-main">${quien}<span class="f-meta">${meta}</span></div>${chip}<div class="btn-row">${acc}</div></div>`;
+}
+function cartasEstudiante(p, e, puedePedir) {
+  const cs = (p.cartas || []).slice().reverse();
+  const lista = cs.length ? `<div class="files">${cs.map(c => cartaRow(p, c, 'estudiante')).join('')}</div>` : '';
+  const form = puedePedir ? `<form class="detail" data-form="carta" novalidate>
+      <div class="fgrid">
+        <div class="field"><label for="c-emp">Empresa u organización</label><input id="c-emp" placeholder="Déjalo vacío para una carta general"></div>
+        <div class="field"><label for="c-dest">Dirigida a (opcional)</label><input id="c-dest" placeholder="Nombre de quien la recibe"></div>
+        <div class="field"><label for="c-cargo">Cargo (opcional)</label><input id="c-cargo" placeholder="Ej. Jefe/a de TI"></div>
+      </div>
+      <label class="check"><input type="checkbox" id="c-req"> <span>Declaro que cumplo los requisitos de ${TIPOS[p.tipo].nombre} (${codigo(p)}): ${TIPOS[p.tipo].req[e.malla]}</span></label>
+      <div class="btn-row"><button type="submit" class="btn primary">Solicitar carta</button></div>
+    </form>` : '';
+  return `<section class="card"><div class="card-head"><h3>${puedePedir ? 'Paso 1 · ' : ''}Carta de presentación</h3><span class="note">Para presentarte a las empresas mientras buscas práctica</span></div>
+    ${puedePedir ? `<p class="note">La emite la Dirección de Carrera con folio y código de verificación, y la descargas en PDF. Puedes pedir una por empresa; sin destinatario, va dirigida a quien corresponda.${state.config.carta.auto ? ' Se emite al instante.' : ''}</p>` : ''}
+    ${form}${lista}</section>`;
+}
+function todasLasCartas() {
+  return state.practicas.flatMap(p => (p.cartas || []).map(c => ({ p, c })))
+    .sort((a, b) => (a.c.estado === 'solicitada' ? 0 : 1) - (b.c.estado === 'solicitada' ? 0 : 1) || (b.c.fechaEmision || b.c.fechaSolicitud).localeCompare(a.c.fechaEmision || a.c.fechaSolicitud));
+}
+function renderCartas() {
+  const box = $('#cartas-list'); if (!box) return;
+  const q = (ui.cq || '').trim().toLowerCase();
+  const rows = todasLasCartas().filter(({ p, c }) => !q || [est(p).nombre, c.empresa, c.folio, c.codigo].join(' ').toLowerCase().includes(q));
+  box.innerHTML = rows.length ? `<div class="files">${rows.map(({ p, c }) => cartaRow(p, c, 'director')).join('')}</div>` : '<p class="empty">Ninguna carta coincide con la búsqueda.</p>';
+}
+
+/* ===================== Vista: Dirección de carrera ===================== */
+function viewDirector() {
+  const tabs = `<div class="tabs" role="tablist"><button role="tab" aria-selected="${ui.dir.tab === 'panel'}" data-act="dir-tab" data-tab="panel">Panel de prácticas</button><button role="tab" aria-selected="${ui.dir.tab === 'personas'}" data-act="dir-tab" data-tab="personas">Personas</button><button role="tab" aria-selected="${ui.dir.tab === 'config'}" data-act="dir-tab" data-tab="config">Configuración</button></div>`;
+  const head = `<div class="page-head"><div><div class="eyebrow">Dirección de carrera</div><h2>Prácticas de Ingeniería Civil Informática</h2></div><div class="btn-row"><button class="btn" data-act="csv">Exportar a CSV</button></div></div>`;
+  if (ui.dir.tab === 'config') return head + tabs + viewConfig();
+  if (ui.dir.tab === 'personas') return head + tabs + viewPersonas();
+  const ps = state.practicas;
+  const cnt = k => ps.filter(p => etapa(p) === k).length;
+  const cerradas = ps.filter(p => p.cierre);
+  const prom = cerradas.length ? redondear(cerradas.reduce((s, p) => s + p.cierre.nota, 0) / cerradas.length) : null;
+  const enEval = ps.filter(p => ['en_evaluacion', 'correcciones'].includes(etapa(p)));
+  const faltaE = enEval.filter(p => !p.evalEmpresa).length, faltaA = enEval.filter(p => !p.evalAcademico).length;
+  const allAl = ps.flatMap(p => alertas(p).map(a => Object.assign({ p }, a))).sort((a, b) => SEV_ORD[a.sev] - SEV_ORD[b.sev]);
+  const nCrit = allAl.filter(a => a.sev === 'crit').length;
+  const kpis = `<div class="kpis">
+    <div class="kpi"><span class="k-label">Prácticas registradas</span><span class="k-val">${ps.length}</span><span class="k-sub">${ps.filter(p => p.tipo === 'industrial').length} industriales · ${ps.filter(p => p.tipo === 'profesional').length} profesionales</span></div>
+    <div class="kpi ${cnt('solicitada') ? 'flag' : ''}"><span class="k-label">Por activar</span><span class="k-val">${cnt('solicitada')}</span><span class="k-sub">solicitudes esperando revisión</span></div>
+    <div class="kpi ${cnt('activada') ? 'flag' : ''}"><span class="k-label">Seguro pendiente</span><span class="k-val">${cnt('activada')}</span><span class="k-sub">activadas sin seguro emitido</span></div>
+    <div class="kpi"><span class="k-label">En curso o por iniciar</span><span class="k-val">${cnt('en_curso') + cnt('lista')}</span><span class="k-sub">${cnt('lista')} por iniciar</span></div>
+    <div class="kpi ${nCrit ? 'flag-crit' : ''}"><span class="k-label">En evaluación</span><span class="k-val">${enEval.length}</span><span class="k-sub">faltan ${faltaE} de empresa · ${faltaA} académicas</span></div>
+    <div class="kpi"><span class="k-label">Promedio nota final</span><span class="k-val">${fmtN(prom)}</span><span class="k-sub">${cerradas.length} cerradas · ${cnt('por_cerrar')} por cerrar</span></div>
+  </div>`;
+  const maxC = Math.max(1, ...Object.keys(ETAPAS).map(cnt));
+  const pipe = `<section class="card"><div class="card-head"><h3>Prácticas por etapa</h3><span class="note">Haz clic en una etapa para filtrar la tabla.</span></div><div class="pipeline">${Object.entries(ETAPAS).map(([k, e]) => `<button type="button" class="pipe-step" data-act="pipe" data-etapa="${k}" aria-pressed="${ui.dir.etapa === k}"><span class="p-n">${cnt(k)}</span><span class="p-l">${e.corto}</span><span class="bar"><i style="width:${cnt(k) / maxC * 100}%"></i></span></button>`).join('')}</div></section>`;
+  const al = `<section class="card"><div class="card-head"><h3>Requieren atención</h3><span class="note">${allAl.length} aviso${allAl.length === 1 ? '' : 's'} según las reglas del proceso</span></div>${allAl.length ? `<div class="alerts">${allAl.map(a => `<button type="button" class="alert-row sev-${a.sev}" data-act="open" data-pid="${a.p.id}"><span class="stripe"></span><span><span class="a-who">${esc(est(a.p).nombre)}</span> <span class="tag">${codigo(a.p)}</span><br><span class="a-txt">${esc(a.txt)}</span></span><span class="chip tone-${a.sev === 'crit' ? 'crit' : a.sev === 'warn' ? 'warn' : 'info'}">${a.sev === 'crit' ? 'Crítico' : a.sev === 'warn' ? 'Atención' : 'Aviso'}</span></button>`).join('')}</div>` : '<p class="empty">Sin avisos pendientes.</p>'}</section>`;
+  const f = ui.dir;
+  const table = `<section class="card"><div class="card-head"><h3>Todas las prácticas</h3><span class="note num" id="dir-count"></span></div>
+    <div class="toolbar">
+      <label class="sr-only" for="f-q">Buscar</label><input type="search" id="f-q" placeholder="Buscar estudiante, empresa o NRC" value="${esc(f.q)}" data-filter="q">
+      <label class="sr-only" for="f-tipo">Tipo</label><select id="f-tipo" data-filter="tipo"><option value="">Ambas prácticas</option><option value="industrial" ${f.tipo === 'industrial' ? 'selected' : ''}>Industrial</option><option value="profesional" ${f.tipo === 'profesional' ? 'selected' : ''}>Profesional</option></select>
+      <label class="sr-only" for="f-etapa">Etapa</label><select id="f-etapa" data-filter="etapa"><option value="">Todas las etapas</option>${Object.entries(ETAPAS).map(([k, e]) => `<option value="${k}" ${f.etapa === k ? 'selected' : ''}>${e.label}</option>`).join('')}</select>
+      <label class="sr-only" for="f-acad">Académico/a</label><select id="f-acad" data-filter="acad"><option value="">Todos los académicos</option>${state.academicos.map(a => `<option value="${a.id}" ${f.acad === a.id ? 'selected' : ''}>${esc(a.nombre)}</option>`).join('')}</select>
+      ${(f.q || f.tipo || f.etapa || f.acad) ? '<button class="btn small" data-act="clear-filters">Quitar filtros</button>' : ''}
+    </div><div id="dir-table"></div></section>`;
+  const cartas = todasLasCartas(); const nSol = cartas.filter(x => x.c.estado === 'solicitada').length;
+  const cartasCard = `<section class="card"><div class="card-head"><h3>Cartas de presentación</h3><span class="note">${nSol} por emitir · ${cartas.filter(x => x.c.estado === 'emitida').length} emitidas</span></div>
+    <div class="toolbar"><label class="sr-only" for="f-cq">Buscar carta</label><input type="search" id="f-cq" placeholder="Buscar por estudiante, empresa, folio o código de verificación" value="${esc(ui.cq || '')}" data-cfilter></div>
+    <div id="cartas-list"></div></section>`;
+  return head + tabs + kpis + al + pipe + table + cartasCard;
+}
+function renderDirTable() {
+  const box = $('#dir-table'); if (!box) return;
+  const f = ui.dir; const q = f.q.trim().toLowerCase();
+  const rows = state.practicas.filter(p => {
+    if (f.tipo && p.tipo !== f.tipo) return false;
+    if (f.etapa && etapa(p) !== f.etapa) return false;
+    if (f.acad && p.academicoId !== f.acad) return false;
+    if (q && !(est(p).nombre + ' ' + p.empresa.razon + ' ' + p.nrc).toLowerCase().includes(q)) return false;
+    return true;
+  }).sort((a, b) => ETAPAS[etapa(a)].orden - ETAPAS[etapa(b)].orden || a.inicio.localeCompare(b.inicio));
+  const cnt = $('#dir-count'); if (cnt) cnt.textContent = `${rows.length} de ${state.practicas.length}`;
+  if (!rows.length) { box.innerHTML = '<p class="empty">Ninguna práctica coincide con los filtros.</p>'; return; }
+  box.innerHTML = `<div class="table-wrap"><table class="grid"><thead><tr><th>Estudiante</th><th>Práctica</th><th>Empresa</th><th>Académico/a</th><th>Fechas</th><th>Etapa</th><th>Notas</th><th><span class="sr-only">Avisos</span></th></tr></thead><tbody>${rows.map(p => {
+    const e = est(p); const al = alertas(p).filter(a => a.sev !== 'info');
+    const sev = al.some(a => a.sev === 'crit') ? 'crit' : 'warn';
+    const nf = p.cierre ? p.cierre.nota : notaFinal(p);
+    const n = v => `<b class="${v != null && v < 4 ? 'n-red' : ''}">${fmtN(v)}</b>`;
+    return `<tr data-act="open" data-pid="${p.id}"><td><button type="button" class="rowbtn" data-act="open" data-pid="${p.id}">${esc(e.nombre)}</button><br><span class="note">Malla ${e.malla}</span></td>
+      <td>${TIPOS[p.tipo].corto}<br><span class="tag">${codigo(p)}</span>${p.nrc ? ` <span class="note mono">NRC ${esc(p.nrc)}</span>` : ''}</td>
+      <td>${esc(p.empresa.razon) || '—'}<br><span class="note">${esc(p.supervisor.nombre)}</span></td>
+      <td>${esc(acadNombre(p.academicoId))}</td>
+      <td class="num">${fmtD(p.inicio)}<br><span class="note">al ${fmtD(p.termino)}</span></td>
+      <td>${chipEtapa(p)}</td>
+      <td><div class="notes3"><span><small>Emp.</small>${n(p.evalEmpresa?.nota)}</span><span><small>Acad.</small>${n(p.evalAcademico?.nota)}</span><span><small>Final</small>${n(nf)}</span></div></td>
+      <td>${al.length ? `<span class="alert-dot tone-${sev}" title="${esc(al.map(a => a.txt).join(' '))}">${al.length}</span>` : ''}</td></tr>`;
+  }).join('')}</tbody></table></div>`;
+}
+function dirActions(p) {
+  const e = etapa(p); const b = [];
+  if (!p.activacion) b.push('<button class="btn" data-act="carta-new">Emitir carta de presentación</button>');
+  if (e === 'solicitada') { b.push('<button class="btn primary" data-act="approve">Aprobar activación</button>'); b.push('<button class="btn" data-act="return-req">Devolver solicitud</button>'); }
+  if (e === 'activada') b.push('<button class="btn primary" data-act="seguro">Registrar seguro emitido</button>');
+  if (e === 'por_cerrar') b.push('<button class="btn primary" data-act="close">Cerrar práctica y registrar nota</button>');
+  if (e !== 'cerrada' && !enPreparacion(e)) b.push('<button class="btn" data-act="reassign">Cambiar docente corrector/a</button>');
+  if (!p.activacion) b.push('<button class="btn danger" data-act="del-practica">Eliminar práctica</button>');
+  return b.join('');
+}
+function renderDrawer() {
+  const root = $('#drawer-root');
+  if (!state || !state.yo || ui.role !== 'director' || !ui.dirSel) { root.innerHTML = ''; return; }
+  const p = byId(ui.dirSel); if (!p) { root.innerHTML = ''; return; }
+  const e = est(p); const al = alertas(p);
+  const prevScroll = $('.drawer-body', root)?.scrollTop || 0;
+  root.innerHTML = `<div class="scrim" data-act="close-drawer"></div><aside class="drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-t">
+    <div class="drawer-head"><div class="d-title"><div class="eyebrow">${TIPOS[p.tipo].nombre} · <span class="mono">${codigo(p)}</span>${p.nrc ? ` · NRC <span class="mono">${esc(p.nrc)}</span>` : ''}</div><h2 id="drawer-t">${esc(e.nombre)}</h2><div class="chips">${chipEtapa(p)}<span class="chip plain tone-neutral">Malla ${e.malla}</span><span class="chip plain tone-neutral">${esc(p.periodo)}</span></div></div><button type="button" class="icon-btn" data-act="close-drawer" aria-label="Cerrar detalle">×</button></div>
+    <div class="drawer-actions">${dirActions(p)}</div>
+    <div class="drawer-body">
+      ${stepper(p)}
+      ${al.map(a => `<div class="callout tone-${a.sev === 'crit' ? 'crit' : a.sev === 'warn' ? 'warn' : 'info'}"><p>${esc(a.txt)}</p></div>`).join('')}
+      ${p.obsSolicitud && !p.solicitud ? `<div class="callout tone-warn"><strong>Solicitud devuelta el ${fmtD(p.obsSolicitud.fecha)}</strong><p>${esc(p.obsSolicitud.texto)}</p></div>` : ''}
+      ${(p.cartas || []).length ? `<section class="card"><h3>Cartas de presentación</h3><div class="files">${p.cartas.slice().reverse().map(c => cartaRow(p, c, 'director')).join('')}</div></section>` : ''}
+      <section class="card"><h3>Práctica</h3>${factsPractica(p)}</section>
+      <section class="card"><h3>Estudiante</h3>${factsEstudiante(p)}</section>
+      <section class="card"><h3>Empresa y supervisor/a</h3>${factsEmpresa(p)}${factsSupervisor(p)}
+        ${p.activacion ? `<div class="file-row"><span class="f-ico" aria-hidden="true">@</span><div class="f-main"><span class="f-name">Acceso a la plataforma</span><span class="f-meta">Enlace enviado a ${esc(p.supervisor.correo)} el ${fmtD(p.activacion.fecha)}. Entra con un código de un solo uso enviado a ese correo y ve solo a sus estudiantes.</span></div><button type="button" class="btn small" data-act="resend-access">Reenviar acceso</button></div>` : '<p class="note">El acceso del supervisor/a se crea cuando se activa la práctica.</p>'}</section>
+      <section class="card"><div class="card-head"><h3>Informe de práctica</h3>${p.informes.length ? `<span class="note">${p.informes.length} versión${p.informes.length > 1 ? 'es' : ''}</span>` : ''}</div>${devolucionesBlock(p)}${fileRows(p, 'informe', p.informes, { showVersion: true }) || '<p class="empty">El estudiante aún no sube su informe.</p>'}</section>
+      ${evalBlock(p, 'empresa')}
+      ${evalBlock(p, 'academico')}
+      <section class="card"><h3>Nota final</h3>${notaFinalBlock(p)}</section>
+      <section class="card"><h3>Documentos de la empresa</h3>${fileRows(p, 'docEmpresa', p.docsEmpresa) || '<p class="empty">Sin documentos.</p>'}</section>
+      <section class="card"><h3>Historial</h3>${timeline(p)}</section>
+    </div></aside>`;
+  const body = $('.drawer-body', root); if (body) body.scrollTop = prevScroll;
+}
+
+/* Configuración de matrices */
+function permisosCard() {
+  const rows = [
+    ['Estudiante', 'Su correo USS y un código de un solo uso', 'Solo su práctica: estado, datos, observaciones y, al cierre, sus notas.', 'Pide cartas, completa el formulario de activación y sube el informe.'],
+    ['Supervisor/a de empresa', 'Enlace por correo al activarse la práctica; luego, código de un solo uso enviado a su correo. Sin contraseña.', 'Solo los estudiantes que tiene a cargo y sus informes.', 'Evalúa con la matriz de la práctica y sube documentos de la empresa.'],
+    ['Docente corrector/a', 'Su correo y un código de un solo uso', 'Las prácticas que la carrera le asignó.', 'Revisa el informe, lo devuelve con observaciones o lo califica.'],
+    ['Dirección de carrera', 'Su correo y un código de un solo uso', 'Todas las prácticas de la carrera en la sede.', 'Emite cartas, activa prácticas, registra seguros, asigna docentes, cierra notas y configura matrices.'],
+    ['Secretaría de estudios', 'Agrégala con perfil de Dirección en la pestaña Personas', 'Todas las prácticas de la carrera en la sede.', 'Lo mismo que la Dirección.']
+  ];
+  return `<section class="card"><div class="card-head"><h3>Perfiles y permisos</h3><span class="note" id="cfg-status">Los cambios de esta pestaña se guardan solos.</span></div>
+    <p class="note">Cada persona ve solo lo que le corresponde. Los permisos los controla la base de datos, no la página.</p>
+    <div class="table-wrap"><table class="perm"><thead><tr><th>Perfil</th><th>Cómo ingresa</th><th>Qué ve</th><th>Qué puede hacer</th></tr></thead><tbody>${rows.map(r => `<tr><td><b>${r[0]}</b></td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td></tr>`).join('')}</tbody></table></div></section>`;
+}
+function viewConfig() {
+  const c = state.config;
+  const [t, r] = ui.mxEdit.split('.');
+  const crit = c.matrices[t][r];
+  const sum = crit.reduce((s, x) => s + (Number(x.peso) || 0), 0);
+  const opt = (tt, rr, l) => `<option value="${tt}.${rr}" ${ui.mxEdit === tt + '.' + rr ? 'selected' : ''}>${l}</option>`;
+  return permisosCard() + `<div class="cfg-grid">
+    ${['industrial', 'profesional'].map(tp => `<section class="card"><h3>${TIPOS[tp].nombre}</h3><p class="note">Peso de cada evaluación en la nota final.</p>
+      <div class="fgrid"><div class="field"><label for="w-${tp}-e">Evaluación empresa (%)</label><input id="w-${tp}-e" type="number" min="0" max="100" step="5" value="${c.ponderacion[tp].empresa}" data-cfgw="${tp}"></div>
+      <div class="field"><label for="w-${tp}-a">Evaluación académica (%)</label><input id="w-${tp}-a" type="number" value="${c.ponderacion[tp].academico}" readonly></div></div></section>`).join('')}
+    <section class="card"><h3>Escala de notas</h3><p class="note">Porcentaje de logro que equivale a la nota 4,0 en la escala de 1,0 a 7,0.</p>
+      <div class="field"><label for="exig">Exigencia (%)</label><input id="exig" type="number" min="50" max="70" step="5" value="${c.exigencia}" data-cfgx></div></section>
+  </div>
+  <section class="card"><div class="card-head"><h3>Carta de presentación</h3><button class="btn small" data-act="carta-preview">Descargar carta de ejemplo</button></div>
+    <p class="note">Datos que aparecen en la carta que se entrega a las empresas.</p>
+    <div class="fgrid">
+      <div class="field"><label for="cc-firmante">Nombre de quien firma</label><input id="cc-firmante" value="${esc(c.carta.firmante)}" placeholder="Tu nombre como aparecerá en la firma" data-cfgc="firmante"></div>
+      <div class="field"><label for="cc-cargo">Cargo</label><input id="cc-cargo" value="${esc(c.carta.cargo)}" data-cfgc="cargo"></div>
+      <div class="field"><label for="cc-correo">Correo de contacto</label><input id="cc-correo" type="email" value="${esc(c.carta.correo)}" data-cfgc="correo"></div>
+      <div class="field"><label for="cc-tel">Teléfono (opcional)</label><input id="cc-tel" value="${esc(c.carta.telefono)}" data-cfgc="telefono"></div>
+      <div class="field"><label for="cc-ciudad">Ciudad</label><input id="cc-ciudad" value="${esc(c.carta.ciudad)}" data-cfgc="ciudad"></div>
+      <div class="field"><label for="cc-vig">Vigencia (días)</label><input id="cc-vig" type="number" min="15" max="365" value="${esc(c.carta.vigencia)}" data-cfgc="vigencia"></div>
+    </div>
+    <div class="checks">
+      <label class="check"><input type="checkbox" data-cfgc="auto" ${c.carta.auto ? 'checked' : ''}> <span>Emitir automáticamente cuando el estudiante declara cumplir los requisitos (sin revisión de la Dirección).</span></label>
+      <label class="check"><input type="checkbox" data-cfgc="legal" ${c.carta.legal ? 'checked' : ''}> <span>Incluir la mención al inciso 3° del artículo 8° del Código del Trabajo (la práctica no da origen a un contrato de trabajo).</span></label>
+    </div>
+  </section>
+  <section class="card"><div class="card-head"><h3>Matrices de evaluación</h3><div class="field" style="min-width:240px"><label for="mx-sel" class="sr-only">Matriz</label><select id="mx-sel" data-act-change="mx-sel">${opt('industrial', 'empresa', 'Industrial · supervisor/a de empresa')}${opt('industrial', 'academico', 'Industrial · académico/a (informe)')}${opt('profesional', 'empresa', 'Profesional · supervisor/a de empresa')}${opt('profesional', 'academico', 'Profesional · académico/a (informe)')}</select></div></div>
+    <p class="note">Cada criterio se califica en 4 niveles (Insuficiente, En desarrollo, Logrado, Destacado). Las evaluaciones ya enviadas conservan la matriz con la que se hicieron.</p>
+    <div class="table-wrap"><table class="wtable"><thead><tr><th style="width:30%">Criterio</th><th>Descripción</th><th>Peso %</th><th><span class="sr-only">Quitar</span></th></tr></thead><tbody>
+    ${crit.map((x, i) => `<tr><td><label class="sr-only" for="cn-${i}">Criterio ${i + 1}</label><input id="cn-${i}" value="${esc(x.nombre)}" data-cfgm="${i}" data-f="nombre"></td><td><label class="sr-only" for="cd-${i}">Descripción ${i + 1}</label><input id="cd-${i}" value="${esc(x.desc)}" data-cfgm="${i}" data-f="desc"></td><td><label class="sr-only" for="cp-${i}">Peso ${i + 1}</label><input id="cp-${i}" type="number" min="0" max="100" value="${esc(x.peso)}" data-cfgm="${i}" data-f="peso"></td><td><button class="btn small danger" data-act="mx-del" data-i="${i}" ${crit.length < 2 ? 'disabled' : ''} aria-label="Quitar criterio ${i + 1}">Quitar</button></td></tr>`).join('')}
+    </tbody></table></div>
+    <div class="btn-row" style="justify-content:space-between;align-items:center"><button class="btn" data-act="mx-add">Agregar criterio</button><span id="mx-sum" class="${sum === 100 ? 'sum-ok' : 'sum-bad'}">Suma de pesos: ${sum}%${sum === 100 ? '' : ' (debe sumar 100%)'}</span></div>
+    <details class="mx"><summary>Vista previa como la ve el evaluador</summary><div id="mx-preview">${matrizHTML(crit, {})}</div></details>
+  </section>`;
+}
+
+/* ===================== Vista: Académico/a ===================== */
+function viewAcademico() {
+  const a = acad(ui.person.academico) || state.academicos[0];
+  const mias = state.practicas.filter(p => p.academicoId === a.id && p.activacion);
+  const porEvaluar = p => p.informes.length && !p.evalAcademico && !devPendiente(p);
+  const lista = (ui.acaFiltro === 'pend' ? mias.filter(porEvaluar) : mias).sort((x, y) => ETAPAS[etapa(x)].orden - ETAPAS[etapa(y)].orden);
+  let sel = byId(ui.sel.academico);
+  if (!sel || sel.academicoId !== a.id) sel = lista[0] || mias[0] || null;
+  const nPend = mias.filter(porEvaluar).length;
+  const head = `<div class="page-head"><div><div class="eyebrow">Docente corrector/a de prácticas</div><h2>${esc(a.nombre)}</h2></div><p>${mias.length} práctica${mias.length === 1 ? '' : 's'} asignada${mias.length === 1 ? '' : 's'} · ${nPend} informe${nPend === 1 ? '' : 's'} por evaluar</p></div>`;
+  const tabs = `<div class="tabs" role="tablist"><button role="tab" aria-selected="${ui.acaFiltro === 'pend'}" data-act="aca-f" data-f="pend">Por evaluar (${nPend})</button><button role="tab" aria-selected="${ui.acaFiltro === 'todas'}" data-act="aca-f" data-f="todas">Todas (${mias.length})</button></div>`;
+  const items = lista.length ? lista.map(p => `<button type="button" class="list-item" data-act="sel" data-who="academico" data-pid="${p.id}" aria-current="${sel && sel.id === p.id}"><span class="li-name">${esc(est(p).nombre)}</span><span class="li-meta">${TIPOS[p.tipo].corto} · ${esc(p.empresa.razon)}</span><span class="chips">${chipEtapa(p)}</span></button>`).join('') : '<p class="empty">No tienes informes pendientes.</p>';
+  return head + tabs + `<div class="split"><div class="list">${items}</div><div class="detail">${sel ? detalleAcademico(sel) : '<section class="card"><p class="empty">Sin prácticas asignadas.</p></section>'}</div></div>`;
+}
+function detalleAcademico(p) {
+  const e = est(p); const key = 'aca:' + p.id;
+  const crit = state.config.matrices[p.tipo].academico;
+  const d = ui.drafts[key] || (ui.drafts[key] = { niveles: {}, comentario: '' });
+  const inf = last(p.informes); const dv = devPendiente(p);
+  let evalSec;
+  if (p.evalAcademico) evalSec = evalBlock(p, 'academico', { abierta: true });
+  else if (!inf) evalSec = `<section class="card"><h3>Evaluación del informe</h3><p class="empty">Podrás evaluar cuando el estudiante suba su informe.</p></section>`;
+  else if (dv) evalSec = `<section class="card"><h3>Evaluación del informe</h3><p class="note">Devolviste la versión ${dv.version} con observaciones el ${fmtD(dv.fecha)}. Esperando una nueva versión del estudiante.</p></section>`;
+  else {
+    const preview = notaDesde(crit, d.niveles, state.config.exigencia);
+    evalSec = `<section class="card"><div class="card-head"><h3>Evaluación del informe · ${TIPOS[p.tipo].nombre}</h3><span class="note">Versión ${inf.version}</span></div>
+      ${raBlock(p)}
+      <p class="note">Marca un nivel por criterio. La nota se calcula con la escala de 1,0 a 7,0 y ${state.config.exigencia}% de exigencia.</p>
+      ${matrizHTML(crit, d.niveles, { editable: true, key })}
+      <div class="score"><span class="big" data-preview="${key}">${fmtN(preview)}</span><span class="lbl" data-preview-lbl="${key}">${Object.keys(d.niveles).length} de ${crit.length} criterios evaluados</span></div>
+      <div class="field"><label for="aca-com">Retroalimentación para el estudiante</label><textarea id="aca-com" data-draft="${key}" data-k="comentario" placeholder="Fortalezas del informe y qué debe mejorar. Si lo devuelves, escribe aquí las observaciones.">${esc(d.comentario)}</textarea></div>
+      <div class="btn-row"><button class="btn primary" data-act="aca-send" data-pid="${p.id}">Registrar evaluación</button><button class="btn" data-act="aca-return" data-pid="${p.id}">Devolver con observaciones</button></div></section>`;
+  }
+  return `<div class="detail-head"><div class="eyebrow">${TIPOS[p.tipo].nombre} · <span class="mono">${codigo(p)}</span> · NRC <span class="mono">${esc(p.nrc)}</span></div><h2>${esc(e.nombre)}</h2><div class="chips">${chipEtapa(p)}<span class="chip plain tone-neutral">${esc(p.empresa.razon)}</span><span class="chip plain tone-neutral">${fmtD(p.inicio)} – ${fmtD(p.termino)}</span></div></div>
+    ${stepper(p)}
+    <section class="card"><div class="card-head"><h3>Informe de práctica</h3>${inf ? `<span class="note">Última versión: ${inf.version} · ${fmtD(inf.fecha)}</span>` : ''}</div>${devolucionesBlock(p)}${fileRows(p, 'informe', p.informes, { showVersion: true }) || '<p class="empty">El estudiante aún no sube su informe.</p>'}</section>
+    ${evalSec}
+    ${evalBlock(p, 'empresa')}
+    <section class="card"><h3>Nota final</h3>${notaFinalBlock(p)}<p class="note">La Dirección de Carrera cierra la práctica cuando ambas evaluaciones están registradas.</p></section>
+    <section class="card"><h3>Contacto</h3>${factsSupervisor(p)}<dl class="facts"><div><dt>Correo del estudiante</dt><dd>${esc(e.correo)}</dd></div></dl></section>`;
+}
+
+/* ===================== Vista: Supervisor/a de empresa ===================== */
+function supervisores() {
+  const m = new Map();
+  state.practicas.filter(p => p.activacion && p.supervisor.correo).forEach(p => { if (!m.has(p.supervisor.correo)) m.set(p.supervisor.correo, { correo: p.supervisor.correo, nombre: p.supervisor.nombre, empresa: p.empresa.razon }); });
+  return [...m.values()];
+}
+function viewEmpresa() {
+  const sups = supervisores();
+  const s = sups.find(x => x.correo === ui.person.empresa) || sups[0];
+  if (!s) return '<section class="card"><p class="empty">No hay supervisores con prácticas activadas.</p></section>';
+  const mias = state.practicas.filter(p => p.activacion && p.supervisor.correo === s.correo).sort((a, b) => (a.evalEmpresa ? 1 : 0) - (b.evalEmpresa ? 1 : 0) || b.inicio.localeCompare(a.inicio));
+  let sel = byId(ui.sel.empresa);
+  if (!sel || sel.supervisor.correo !== s.correo) sel = mias[0];
+  const pend = mias.filter(p => p.seguro && !p.evalEmpresa).length;
+  const head = `<div class="page-head"><div><div class="eyebrow">Supervisor/a en la empresa · ${esc(s.empresa)}</div><h2>${esc(s.nombre)}</h2></div><p>${mias.length} estudiante${mias.length === 1 ? '' : 's'} a cargo · ${pend} evaluación${pend === 1 ? '' : 'es'} pendiente${pend === 1 ? '' : 's'}</p></div>`;
+  const items = mias.map(p => {
+    const st = !p.seguro ? '<span class="chip tone-neutral">Aún no inicia</span>' : p.evalEmpresa ? '<span class="chip tone-ok">Evaluación enviada</span>' : (p.termino <= TODAY ? '<span class="chip tone-warn">Evaluación pendiente</span>' : (p.inicio <= TODAY ? '<span class="chip tone-accent">En curso</span>' : '<span class="chip tone-neutral">Por iniciar</span>'));
+    return `<button type="button" class="list-item" data-act="sel" data-who="empresa" data-pid="${p.id}" aria-current="${sel && sel.id === p.id}"><span class="li-name">${esc(est(p).nombre)}</span><span class="li-meta">${TIPOS[p.tipo].nombre} · ${fmtD(p.inicio)} – ${fmtD(p.termino)}</span><span class="chips">${st}</span></button>`;
+  }).join('');
+  return head + `<div class="split"><div class="list">${items}</div><div class="detail">${sel ? detalleEmpresa(sel) : ''}</div></div>`;
+}
+function detalleEmpresa(p) {
+  const e = est(p); const key = 'emp:' + p.id;
+  const crit = state.config.matrices[p.tipo].empresa;
+  const d = ui.drafts[key] || (ui.drafts[key] = { niveles: {}, fortalezas: '', mejoras: '', recibiria: '' });
+  let evalSec;
+  if (p.evalEmpresa) evalSec = evalBlock(p, 'empresa', { abierta: true });
+  else if (!p.seguro) evalSec = `<section class="card"><h3>Evaluación de desempeño</h3><p class="empty">La práctica se habilita cuando la carrera emite el seguro. El estudiante no debe comenzar antes.</p></section>`;
+  else {
+    const preview = notaDesde(crit, d.niveles, state.config.exigencia);
+    const antes = p.termino > TODAY ? `<div class="callout tone-info"><p>La práctica termina el ${fmtD(p.termino)}. Puedes avanzar la evaluación, pero idealmente envíala al terminar.</p></div>` : '';
+    evalSec = `<section class="card"><div class="card-head"><h3>Evaluación de desempeño · ${TIPOS[p.tipo].nombre}</h3><span class="note">Matriz de ${TIPOS[p.tipo].corto.toLowerCase()}</span></div>
+      ${antes}
+      ${raBlock(p)}
+      <p class="note">Marca el nivel que mejor describe el desempeño del estudiante en cada criterio.</p>
+      ${matrizHTML(crit, d.niveles, { editable: true, key })}
+      <div class="score"><span class="big" data-preview="${key}">${fmtN(preview)}</span><span class="lbl" data-preview-lbl="${key}">${Object.keys(d.niveles).length} de ${crit.length} criterios evaluados</span></div>
+      <div class="fgrid"><div class="field"><label for="emp-f">Fortalezas observadas</label><textarea id="emp-f" data-draft="${key}" data-k="fortalezas">${esc(d.fortalezas)}</textarea></div>
+      <div class="field"><label for="emp-m">Aspectos a mejorar</label><textarea id="emp-m" data-draft="${key}" data-k="mejoras">${esc(d.mejoras)}</textarea></div></div>
+      <div class="field"><span class="lab" id="rec-l">¿Recibiría a otro/a estudiante de Ingeniería Civil Informática?</span><div class="radio-inline" role="radiogroup" aria-labelledby="rec-l"><label><input type="radio" name="rec-${p.id}" value="si" data-draft="${key}" data-k="recibiria" ${d.recibiria === 'si' ? 'checked' : ''}> Sí</label><label><input type="radio" name="rec-${p.id}" value="no" data-draft="${key}" data-k="recibiria" ${d.recibiria === 'no' ? 'checked' : ''}> No</label></div></div>
+      <div class="btn-row"><button class="btn primary" data-act="emp-send" data-pid="${p.id}">Enviar evaluación</button></div></section>`;
+  }
+  return `<div class="detail-head"><div class="eyebrow">${TIPOS[p.tipo].nombre} · Malla ${e.malla}</div><h2>${esc(e.nombre)}</h2><div class="chips"><span class="chip plain tone-neutral">${fmtD(p.inicio)} – ${fmtD(p.termino)}</span><span class="chip plain tone-neutral">${esc(p.empresa.area || p.empresa.razon)}</span></div></div>
+    <section class="card"><h3>Datos de la práctica</h3><dl class="facts">
+      <div><dt>Estudiante</dt><dd>${esc(e.nombre)}</dd></div><div><dt>Correo del estudiante</dt><dd>${esc(e.correo)}</dd></div>
+      <div><dt>Académico/a a cargo</dt><dd>${esc(acadNombre(p.academicoId))}<br><span class="note">${esc((acad(p.academicoId) || {}).correo || '')}</span></dd></div>
+      <div><dt>Seguro de práctica</dt><dd>${p.seguro ? 'Emitido el ' + fmtD(p.seguro.fecha) : '<span class="chip tone-warn">En trámite</span>'}</dd></div></dl></section>
+    ${evalSec}
+    <section class="card"><div class="card-head"><h3>Informe del estudiante</h3></div>${fileRows(p, 'informe', p.informes, { showVersion: true }) || '<p class="empty">El estudiante aún no sube su informe.</p>'}</section>
+    <section class="card"><div class="card-head"><h3>Documentos de la empresa</h3><span class="note">Opcional: certificado de práctica, carta u otro respaldo firmado.</span></div>
+      ${fileRows(p, 'docEmpresa', p.docsEmpresa)}
+      ${p.activacion ? uploadZone('docEmpresa', p.id, 'Subir documento de la empresa') : ''}</section>`;
+}
+
+/* ===================== Vista: Estudiante ===================== */
+function viewEstudiante() {
+  const p = practicaDe(state.yo.email);
+  if (!p) return `<section class="card login-card"><h2>Aún no tienes una práctica registrada</h2><p>La Dirección de Carrera debe incluirte en la lista de estudiantes en práctica. Si crees que es un error, escríbele.</p></section>`;
+  const e = est(p);
+  const et = etapa(p);
+  const head = `<div class="page-head"><div><div class="eyebrow">Estudiante · Malla ${e.malla}</div><h2>${esc(e.nombre)}</h2></div><div class="chips">${chipEtapa(p)}<span class="tag">${codigo(p)}</span></div></div>`;
+  let main = '';
+  if (enPreparacion(et)) main = cartasEstudiante(p, e, true) + formularioEstudiante(p, e);
+  else {
+    const msg = {
+      solicitada: ['info', 'Solicitud enviada', `Enviaste la solicitud el ${fmtD(p.solicitud?.fecha)}. La Dirección de Carrera la revisará; al activarla, recibirás el formulario y luego el seguro en tu correo institucional.`],
+      activada: ['warn', 'Práctica activada · seguro en trámite', 'No comiences tu práctica hasta recibir el seguro en tu correo institucional.'],
+      lista: ['accent', 'Todo listo', `Tu seguro está emitido. Comienzas el ${fmtD(p.inicio)}. Al terminar, sube aquí tu informe.`],
+      en_curso: ['accent', 'Práctica en curso', `Terminas el ${fmtD(p.termino)}. Sube tu informe en esta página cuando lo tengas listo.`],
+      correcciones: ['warn', 'Tu informe tiene observaciones', 'Revisa las observaciones de tu académico/a y sube una nueva versión.'],
+      en_evaluacion: ['info', 'En evaluación', 'Tu informe fue recibido. La empresa y tu académico/a están evaluando.'],
+      por_cerrar: ['ok', 'Evaluaciones completas', 'La Dirección de Carrera cerrará tu práctica y registrará la nota final.'],
+      cerrada: ['ok', 'Práctica cerrada', `Nota final: ${fmtN(p.cierre?.nota)}.`]
+    }[et];
+    const puedeSubir = p.seguro && !p.evalAcademico && !p.cierre;
+    main = `<div class="callout tone-${msg[0]}"><strong>${msg[1]}</strong><p>${msg[2]}</p></div>
+      ${stepper(p)}
+      ${p.seguro ? `<section class="card"><div class="card-head"><h3>Informe de práctica</h3>${p.informes.length ? `<span class="note">${p.informes.length} versión${p.informes.length > 1 ? 'es' : ''} enviada${p.informes.length > 1 ? 's' : ''}</span>` : ''}</div>
+        ${devolucionesBlock(p)}
+        ${fileRows(p, 'informe', p.informes, { showVersion: true })}
+        ${puedeSubir ? uploadZone('informe', p.id, p.informes.length ? 'Subir nueva versión del informe' : 'Subir informe de práctica') : (p.evalAcademico ? '<p class="note">Tu informe ya fue evaluado.</p>' : '')}
+      </section>` : ''}
+      ${p.seguro ? `<section class="card"><h3>Evaluaciones</h3><dl class="facts">
+        <div><dt>Evaluación de la empresa</dt><dd>${p.evalEmpresa ? '<span class="chip tone-ok">Recibida</span>' : '<span class="chip tone-neutral">Pendiente</span>'}</dd></div>
+        <div><dt>Evaluación académica</dt><dd>${p.evalAcademico ? '<span class="chip tone-ok">Recibida</span>' : '<span class="chip tone-neutral">Pendiente</span>'}</dd></div></dl>
+        ${p.evalAcademico ? `<div class="callout tone-info"><strong>Retroalimentación de ${esc(p.evalAcademico.por)}</strong><p>${esc(p.evalAcademico.comentario)}</p></div>` : ''}
+        ${p.cierre ? notaFinalBlock(p) : '<p class="note">Verás tus notas cuando la Dirección de Carrera cierre la práctica.</p>'}</section>` : ''}
+      <section class="card"><h3>Datos de mi práctica</h3>${factsPractica(p)}</section>
+      <section class="card"><h3>Empresa y supervisor/a</h3>${factsEmpresa(p)}${factsSupervisor(p)}</section>
+      ${(p.cartas || []).length ? cartasEstudiante(p, e, false) : ''}`;
+  }
+  const side = `<aside class="card"><h3>Antes de empezar</h3><ul class="rules">
+    <li><span class="ri">!</span><span><b>No inicies sin seguro</b>La práctica no puede comenzar antes de que se emita el seguro.</span></li>
+    <li><span class="ri">10</span><span><b>Anticipación</b>Solicita la activación con al menos 10 días hábiles antes del inicio.</span></li>
+    <li><span class="ri">2×</span><span><b>Sin prácticas seguidas</b>No se toman dos prácticas consecutivas, aunque cumplas los requisitos.</span></li>
+    <li><span class="ri">15</span><span><b>Fecha límite</b>Las prácticas de verano se pueden solicitar hasta el 15 de enero.</span></li>
+    <li><span class="ri">✓</span><span><b>Cierre con la empresa</b>Coordina que tu supervisor/a envíe la evaluación dentro del plazo.</span></li>
+  </ul>
+  <dl class="facts" style="grid-template-columns:1fr">
+    <div><dt>Tu asignatura</dt><dd><span class="mono">${codigo(p)}</span> · ${TIPOS[p.tipo].nombre} · ${TIPOS[p.tipo].sct[e.malla]} SCT · ${TIPOS[p.tipo].momento[e.malla]}</dd></div>
+    <div><dt>Requisito</dt><dd>${TIPOS[p.tipo].req[e.malla]}</dd></div>
+    <div><dt>Resultado de aprendizaje</dt><dd>${TIPOS[p.tipo].ra[e.malla]}</dd></div>
+    <div><dt>Plan de estudios</dt><dd>${MALLAS[e.malla].label} · ${MALLAS[e.malla].decreto}</dd></div>
+  </dl></aside>`;
+  return head + `<div class="two"><div class="detail">${main}</div>${side}</div>`;
+}
+function fld(path, label, val, { type = 'text', req = true, ph = '', ro = false, cls = '' } = {}) {
+  const id = 'f-' + path.replace(/\./g, '-'); const err = ui.formErrors[path];
+  return `<div class="field ${err ? 'err' : ''} ${cls}"><label for="${id}">${label}${req && !ro ? ' *' : ''}</label><input id="${id}" type="${type}" value="${esc(val)}" data-bind="${path}" ${ph ? `placeholder="${esc(ph)}"` : ''} ${ro ? 'readonly' : ''} ${err ? `aria-invalid="true" aria-describedby="${id}-e"` : ''}>${err ? `<span class="ferr" id="${id}-e">${esc(err)}</span>` : ''}</div>`;
+}
+function formularioEstudiante(p, e) {
+  const errs = Object.values(ui.formErrors);
+  const ck = (k, label) => `<label class="check ${ui.formErrors['ck.' + k] ? 'err' : ''}"><input type="checkbox" data-bind="ck.${k}" ${p.checklist[k] ? 'checked' : ''}> <span>${label}</span></label>`;
+  const bd = p.inicio ? businessDaysBetween(TODAY, p.inicio) : null;
+  return `${p.obsSolicitud ? `<div class="callout tone-warn"><strong>La Dirección de Carrera devolvió tu solicitud el ${fmtD(p.obsSolicitud.fecha)}</strong><p>${esc(p.obsSolicitud.texto)}</p></div>` : ''}
+  <div class="callout tone-info"><strong>Paso 2 · Cuando tengas empresa: datos para activar tu práctica</strong><p>Completa el formulario y envíalo a la Dirección de Carrera. Se guarda automáticamente mientras escribes.</p></div>
+  ${errs.length ? `<div class="errbox" role="alert"><strong>Revisa ${errs.length} campo${errs.length > 1 ? 's' : ''} antes de enviar:</strong><ul>${[...new Set(errs)].map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>` : ''}
+  <form class="detail" data-form="solicitud" novalidate>
+    <fieldset><legend>1. Datos del estudiante</legend><div class="fgrid">
+      ${fld('e.nombre', 'Nombre completo', e.nombre, { ro: true })}
+      ${fld('e.rut', 'RUT', e.rut, { ph: '12.345.678-5' })}
+      ${fld('e.malla', 'Malla', MALLAS[e.malla].label, { ro: true })}
+      ${fld('e.nivel', 'Último nivel aprobado', e.nivel + '°', { ro: true })}
+      <div class="field"><label for="f-p-tipo">Asignatura</label><select id="f-p-tipo" data-bind="p.tipo" data-rerender><option value="industrial" ${p.tipo === 'industrial' ? 'selected' : ''}>Práctica Industrial · ${TIPOS.industrial.codigo[e.malla]}</option><option value="profesional" ${p.tipo === 'profesional' ? 'selected' : ''}>Práctica Profesional · ${TIPOS.profesional.codigo[e.malla]}</option></select></div>
+      ${fld('p.nrc', 'NRC de la sección', p.nrc, { ph: 'Ej. 4470' })}
+      ${fld('e.correo', 'Correo institucional', e.correo, { type: 'email', ro: true })}
+      ${fld('e.telefono', 'Teléfono', e.telefono, { type: 'tel' })}
+    </div><p class="note">Requisito (${codigo(p)}): ${TIPOS[p.tipo].req[e.malla]} Si tu malla o nivel no son correctos, avísale a la Dirección de Carrera.</p></fieldset>
+    <fieldset><legend>2. Datos de la empresa</legend><div class="fgrid">
+      ${fld('p.empresa.razon', 'Razón social', p.empresa.razon)}
+      ${fld('p.empresa.rut', 'RUT de la empresa', p.empresa.rut)}
+      ${fld('p.empresa.direccion', 'Dirección', p.empresa.direccion, { cls: '' })}
+      ${fld('p.empresa.area', 'Área o unidad TI', p.empresa.area, { req: false })}
+      ${fld('p.empresa.rep', 'Representante legal', p.empresa.rep)}
+      ${fld('p.empresa.rutRep', 'RUT del representante legal', p.empresa.rutRep)}
+    </div></fieldset>
+    <fieldset><legend>3. Supervisor/a en la empresa</legend><p class="note">Esta persona recibirá un acceso a la plataforma para evaluarte con la matriz de tu práctica.</p><div class="fgrid">
+      ${fld('p.supervisor.nombre', 'Nombre del supervisor/a o jefe directo', p.supervisor.nombre)}
+      ${fld('p.supervisor.cargo', 'Cargo', p.supervisor.cargo)}
+      ${fld('p.supervisor.correo', 'Correo', p.supervisor.correo, { type: 'email' })}
+      ${fld('p.supervisor.telefono', 'Teléfono', p.supervisor.telefono, { type: 'tel' })}
+    </div></fieldset>
+    <fieldset><legend>4. Datos de la práctica</legend><div class="fgrid">
+      ${fld('p.inicio', 'Fecha de inicio', p.inicio, { type: 'date' })}
+      ${fld('p.termino', 'Fecha de término', p.termino, { type: 'date' })}
+      <div class="field ${ui.formErrors['p.academicoId'] ? 'err' : ''}"><label for="f-p-academicoId">Docente corrector/a *</label><select id="f-p-academicoId" data-bind="p.academicoId"><option value="">Elige…</option>${state.academicos.map(a => `<option value="${a.id}" ${p.academicoId === a.id ? 'selected' : ''}>${esc(a.nombre)}</option>`).join('')}</select>${ui.formErrors['p.academicoId'] ? `<span class="ferr">${esc(ui.formErrors['p.academicoId'])}</span>` : ''}</div>
+    </div>${bd != null && p.inicio > TODAY ? `<p class="note ${bd < 10 ? '' : ''}">Faltan <b>${bd}</b> días hábiles para el inicio${bd < 10 ? ' · <span style="color:var(--warn)">menos de los 10 requeridos</span>' : ''}.</p>` : ''}</fieldset>
+    <fieldset><legend>5. Confirmaciones</legend><div class="checks">
+      ${ck('inscrita', 'Tengo inscrita la asignatura de práctica (proceso regular o inscripción en papel).')}
+      ${ck('requisitos', 'Cumplo los requisitos académicos de esta práctica.')}
+      ${ck('cupo', 'La empresa me confirmó el cupo para las fechas indicadas.')}
+      ${ck('noConsecutiva', 'No estoy tomando esta práctica inmediatamente después de otra.')}
+    </div></fieldset>
+    <div class="btn-row"><button type="submit" class="btn primary">Enviar solicitud de activación</button><button type="button" class="btn" data-act="save-draft">Guardar borrador</button><span class="note" id="save-status" style="align-self:center"></span></div>
+  </form>`;
+}
+function validarSolicitud(p, e) {
+  const er = {};
+  const req = (path, val, msg) => { if (!String(val ?? '').trim()) er[path] = msg; };
+  req('e.rut', e.rut, 'Falta tu RUT.'); if (e.rut && !rutValido(e.rut)) er['e.rut'] = 'Tu RUT no es válido (revisa el dígito verificador).';
+  req('e.correo', e.correo, 'Falta tu correo institucional.'); if (e.correo && !emailValido(e.correo)) er['e.correo'] = 'Tu correo no tiene un formato válido.';
+  req('e.telefono', e.telefono, 'Falta tu teléfono.');
+  if (e.malla === '2024' && Number(e.nivel) < TIPOS[p.tipo].nivelMin) er['e.nivel'] = `Para ${TIPOS[p.tipo].nombre} (malla 2024) necesitas el ${TIPOS[p.tipo].nivelMin}° nivel aprobado.`;
+  req('p.nrc', p.nrc, 'Falta el NRC de la sección.');
+  req('p.empresa.razon', p.empresa.razon, 'Falta la razón social de la empresa.');
+  req('p.empresa.rut', p.empresa.rut, 'Falta el RUT de la empresa.'); if (p.empresa.rut && !rutValido(p.empresa.rut)) er['p.empresa.rut'] = 'El RUT de la empresa no es válido.';
+  req('p.empresa.direccion', p.empresa.direccion, 'Falta la dirección de la empresa.');
+  req('p.empresa.rep', p.empresa.rep, 'Falta el representante legal.');
+  req('p.empresa.rutRep', p.empresa.rutRep, 'Falta el RUT del representante legal.'); if (p.empresa.rutRep && !rutValido(p.empresa.rutRep)) er['p.empresa.rutRep'] = 'El RUT del representante legal no es válido.';
+  req('p.supervisor.nombre', p.supervisor.nombre, 'Falta el nombre del supervisor/a.');
+  req('p.supervisor.cargo', p.supervisor.cargo, 'Falta el cargo del supervisor/a.');
+  req('p.supervisor.correo', p.supervisor.correo, 'Falta el correo del supervisor/a.'); if (p.supervisor.correo && !emailValido(p.supervisor.correo)) er['p.supervisor.correo'] = 'El correo del supervisor/a no tiene un formato válido.';
+  req('p.supervisor.telefono', p.supervisor.telefono, 'Falta el teléfono del supervisor/a.');
+  req('p.inicio', p.inicio, 'Falta la fecha de inicio.'); req('p.termino', p.termino, 'Falta la fecha de término.');
+  if (p.inicio && p.inicio <= TODAY) er['p.inicio'] = 'La fecha de inicio debe ser posterior a hoy.';
+  if (p.inicio && p.termino && p.termino <= p.inicio) er['p.termino'] = 'La fecha de término debe ser posterior al inicio.';
+  req('p.academicoId', p.academicoId, 'Elige al docente a cargo.');
+  const ckm = { inscrita: 'Confirma que tienes inscrita la asignatura.', requisitos: 'Confirma que cumples los requisitos.', cupo: 'Confirma el cupo con la empresa.', noConsecutiva: 'Confirma que no es una práctica consecutiva.' };
+  for (const k in ckm) if (!p.checklist[k]) er['ck.' + k] = ckm[k];
+  return er;
+}
+function setBind(path, value, p, e) {
+  if (path.startsWith('ck.')) { p.checklist[path.slice(3)] = value; return; }
+  const [root, ...rest] = path.split('.');
+  let o = root === 'e' ? e : p;
+  for (let i = 0; i < rest.length - 1; i++) o = o[rest[i]];
+  const k = rest[rest.length - 1];
+  o[k] = (k === 'nivel') ? Number(value) : value;
+}
+
+/* ===================== Diálogos y avisos ===================== */
+let dlgOk = null, lastFocus = null;
+function openDialog({ title, body, okLabel = 'Confirmar', onOk, cancelLabel = 'Cancelar', danger = false }) {
+  lastFocus = document.activeElement;
+  $('#modal-root').innerHTML = `<div class="scrim" data-act="dlg-cancel"></div><div class="dialog" role="dialog" aria-modal="true" aria-labelledby="dlg-t"><h3 id="dlg-t">${title}</h3><div class="dlg-body">${body}</div><div class="dlg-actions"><button type="button" class="btn" data-act="dlg-cancel">${cancelLabel}</button><button type="button" class="btn ${danger ? 'danger' : 'primary'}" data-act="dlg-ok">${okLabel}</button></div></div>`;
+  dlgOk = onOk;
+  const first = $('#modal-root .dialog input, #modal-root .dialog select, #modal-root .dialog textarea') || $('#modal-root [data-act="dlg-ok"]');
+  first && first.focus();
+}
+function closeDialog() { $('#modal-root').innerHTML = ''; dlgOk = null; if (lastFocus && document.contains(lastFocus)) lastFocus.focus(); }
+let toastT = null;
+function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 3200); }
+
+async function downloadDoc(p, kind, idx) {
+  const doc = kind === 'informe' ? p.informes[idx] : p.docsEmpresa[idx];
+  if (!doc || !doc.path) { toast('Archivo no disponible.'); return; }
+  toast('Descargando…');
+  const { data, error } = await sb.storage.from('archivos').download(doc.path);
+  if (error) { toast('No se pudo descargar el archivo: ' + (error.message || '')); return; }
+  offerFile(doc.nombre, data);
+}
+
+/* ===================== Personas (Dirección) ===================== */
+function parseCarga(txt) {
+  const filas = [], errores = [];
+  String(txt || '').split(/\r?\n/).forEach((line, i) => {
+    if (!line.trim()) return;
+    if (i === 0 && /correo|email/i.test(line)) return;
+    const [nombre = '', email = '', rut = '', malla = '', nivel = '', practica = '', periodo = ''] = line.split(/\t|;/).map(x => x.trim());
+    const err = [];
+    if (!emailValido(email)) err.push('correo no válido');
+    if (!['2019', '2024'].includes(malla)) err.push('la malla debe ser 2019 o 2024');
+    const tp = /industrial|g00[17]/i.test(practica) ? 'industrial' : /profesional|i00[16]/i.test(practica) ? 'profesional' : '';
+    if (!tp) err.push('la práctica debe ser industrial o profesional (o su código)');
+    if (rut && !rutValido(rut)) err.push('RUT no válido');
+    if (err.length) errores.push(`Línea ${i + 1}: ${err.join(', ')}.`);
+    else filas.push({ email: email.toLowerCase(), nombre, rol: 'estudiante', rut, malla, nivel: Number(nivel) || 0, tipo: tp, periodo });
+  });
+  return { filas, errores };
+}
+function renderCargaPreview() {
+  const box = $('#carga-prev'); if (!box) return;
+  const { filas, errores } = parseCarga(ui.cargaTxt);
+  box.innerHTML = !ui.cargaTxt.trim() ? '' : `${filas.length ? `<p class="note"><b>${filas.length}</b> estudiante${filas.length > 1 ? 's' : ''} listo${filas.length > 1 ? 's' : ''} para cargar.</p>` : ''}${errores.length ? `<div class="errbox"><strong>Corrige estas líneas:</strong><ul>${errores.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>` : ''}`;
+  const b = $('#carga-btn');
+  if (b) { b.disabled = !filas.length || errores.length > 0; b.textContent = filas.length ? `Cargar ${filas.length} estudiante${filas.length > 1 ? 's' : ''}` : 'Cargar estudiantes'; }
+}
+function viewPersonas() {
+  const eq = state.equipo || [];
+  const ests = state.estudiantes || [];
+  return `<div class="cfg-grid">
+    <section class="card"><h3>Equipo de la carrera</h3><p class="note">Docentes correctores y Dirección de Carrera. Entran con su correo y reciben un código de acceso.</p>
+      <div class="files">${eq.map(x => `<div class="file-row"><span class="f-ico" aria-hidden="true">${x.rol === 'direccion' ? 'DIR' : 'DOC'}</span><div class="f-main"><span class="f-name">${esc(x.nombre) || esc(x.email)}</span><span class="f-meta">${esc(x.email)} · ${x.rol === 'direccion' ? 'Dirección de carrera' : 'Docente corrector/a'}</span></div></div>`).join('') || '<p class="empty">Aún no hay docentes.</p>'}</div>
+      <form data-form="equipo" class="detail" novalidate><div class="fgrid">
+        <div class="field"><label for="eq-n">Nombre</label><input id="eq-n" autocomplete="off"></div>
+        <div class="field"><label for="eq-m">Correo</label><input id="eq-m" type="email" autocomplete="off"></div>
+        <div class="field"><label for="eq-r">Perfil</label><select id="eq-r"><option value="docente">Docente corrector/a</option><option value="direccion">Dirección de carrera</option></select></div>
+      </div><div class="btn-row"><button type="submit" class="btn primary">Agregar al equipo</button></div></form></section>
+    <section class="card"><h3>Cargar estudiantes</h3>
+      <p class="note">Pega una fila por estudiante, por ejemplo copiada desde Excel. Columnas separadas por tabulación o punto y coma: <b>nombre; correo; RUT; malla (2019 o 2024); nivel aprobado; práctica (industrial, profesional o su código); período</b>.</p>
+      <p class="note mono">Ana Pérez Soto; ana.perez@correo.uss.cl; 12.345.678-5; 2024; 5; G007; Verano 2027</p>
+      <div class="field"><label for="carga-txt">Estudiantes</label><textarea id="carga-txt" data-carga rows="7" placeholder="Pega aquí las filas">${esc(ui.cargaTxt)}</textarea></div>
+      <div id="carga-prev"></div>
+      <div class="btn-row"><button type="button" class="btn primary" id="carga-btn" data-act="carga-enviar" disabled>Cargar estudiantes</button></div>
+      <p class="note">Se crea una práctica en preparación para cada estudiante. Si ya tiene una práctica abierta del mismo tipo, solo se actualizan sus datos.</p></section>
+  </div>
+  <section class="card"><div class="card-head"><h3>Estudiantes registrados</h3><span class="note">${ests.length}</span></div>
+    ${ests.length ? `<div class="table-wrap"><table class="grid"><thead><tr><th>Nombre</th><th>Correo</th><th>Malla</th><th>Nivel</th><th>Práctica actual</th></tr></thead><tbody>${ests.map(e => { const p = practicaDe(e.id); return `<tr${p ? ` data-act="open" data-pid="${p.id}"` : ''}><td>${esc(e.nombre)}</td><td>${esc(e.correo)}</td><td>${esc(e.malla)}</td><td>${esc(e.nivel)}°</td><td>${p ? `${TIPOS[p.tipo].corto} · ${chipEtapa(p)}` : '—'}</td></tr>`; }).join('')}</tbody></table></div>` : '<p class="empty">Aún no hay estudiantes cargados.</p>'}</section>`;
+}
+
+/* ===================== Ingreso ===================== */
+function viewSinConfig() {
+  return `<section class="card login-card"><h2>Falta configurar la conexión</h2><p>Edita el archivo <span class="mono">config.js</span> con la Project URL y la clave pública de tu proyecto de Supabase.</p></section>`;
+}
+function viewLogin() {
+  const a = ui.auth;
+  if (a.step === 'code') return `<section class="card login-card"><div class="eyebrow">Ingresar</div><h2>Revisa tu correo</h2>
+    <p>Enviamos un correo a <b>${esc(a.email)}</b>. Haz clic en el enlace que contiene o escribe aquí el código. Si no llega en unos minutos, revisa la carpeta de spam.</p>
+    <form data-form="auth-code" class="detail" novalidate><div class="field"><label for="au-code">Código</label><input id="au-code" inputmode="numeric" autocomplete="one-time-code" maxlength="10"></div>
+    <div class="btn-row"><button type="submit" class="btn primary">Entrar</button><button type="button" class="btn" data-act="auth-back">Usar otro correo</button></div></form></section>`;
+  return `<section class="card login-card"><div class="eyebrow">Ingeniería Civil Informática · Sede De la Patagonia</div><h2>Ingresar a Prácticas ICIF</h2>
+    <p>Escribe tu correo y te enviaremos un enlace y un código para entrar, sin contraseña. Estudiantes y docentes: usen su correo USS. Supervisores: el correo que registró la carrera.</p>
+    <form data-form="auth-email" class="detail" novalidate><div class="field"><label for="au-mail">Correo</label><input id="au-mail" type="email" autocomplete="email" value="${esc(a.email)}"></div>
+    <div class="btn-row"><button type="submit" class="btn primary">Enviarme el acceso</button></div></form></section>`;
+}
+function viewNoRegistrado() {
+  const mail = (state && state.email) || (session && session.user && session.user.email) || '';
+  return `<section class="card login-card"><h2>Tu correo no está registrado</h2><p>Entraste como <b>${esc(mail)}</b>, pero ese correo no tiene un perfil en la plataforma.</p>
+    <p class="note">Si eres estudiante o docente, pide a la Dirección de Carrera que te agregue. Si eres supervisor/a de empresa, tu acceso se crea cuando la carrera activa la práctica con tu correo.</p>
+    <div class="btn-row"><button class="btn" data-act="logout">Cerrar sesión</button></div></section>`;
+}
+
+/* ===================== Render ===================== */
+function renderWho() {
+  const w = $('#whoami');
+  if (!state || !state.yo) { w.innerHTML = session ? '<button type="button" class="btn small" data-act="logout">Cerrar sesión</button>' : ''; return; }
+  w.innerHTML = `<span class="who-n"><b>${esc(state.yo.nombre || state.yo.email)}</b><span class="note">${ROLE_LABEL[state.yo.rol]}</span></span><button type="button" class="btn small" data-act="logout">Cerrar sesión</button>`;
+}
+function renderBar() {
+  const b = $('#pilot-bar'); const correo = state && state.config && state.config.carta && state.config.carta.correo;
+  if (state && state.yo && correo) { b.hidden = false; b.innerHTML = `<span><strong>Piloto</strong> de la plataforma de prácticas. Si algo no funciona, escribe a ${esc(correo)}.</span>`; }
+  else b.hidden = true;
+}
+function render() {
+  renderWho(); renderBar();
+  const app = $('#app');
+  if (!sb) { app.innerHTML = viewSinConfig(); renderDrawer(); return; }
+  if (cargando) { app.innerHTML = '<p class="empty">Cargando…</p>'; renderDrawer(); return; }
+  if (!session) { app.innerHTML = viewLogin(); renderDrawer(); return; }
+  if (errorCarga) { app.innerHTML = `<section class="card login-card"><h2>No pudimos cargar tus datos</h2><p>${esc(errorCarga)}</p><div class="btn-row"><button class="btn primary" data-act="retry">Reintentar</button><button class="btn" data-act="logout">Cerrar sesión</button></div></section>`; renderDrawer(); return; }
+  if (!state || !state.yo) { app.innerHTML = viewNoRegistrado(); renderDrawer(); return; }
+  app.innerHTML = ui.role === 'director' ? viewDirector() : ui.role === 'academico' ? viewAcademico() : ui.role === 'empresa' ? viewEmpresa() : viewEstudiante();
+  if (ui.role === 'director' && ui.dir.tab === 'panel') { renderDirTable(); renderCartas(); }
+  if (ui.role === 'director' && ui.dir.tab === 'personas') renderCargaPreview();
+  renderDrawer();
+  saveUI();
+}
+
+/* ===================== Acciones ===================== */
+function updateMatrixPreview(key) {
+  const [rol, pid] = key.split(':'); const p = byId(pid); if (!p) return;
+  const crit = state.config.matrices[p.tipo][rol === 'aca' ? 'academico' : 'empresa'];
+  const d = ui.drafts[key];
+  const el = document.querySelector(`[data-preview="${key}"]`); if (el) el.textContent = fmtN(notaDesde(crit, d.niveles, state.config.exigencia));
+  const lb = document.querySelector(`[data-preview-lbl="${key}"]`); if (lb) lb.textContent = `${Object.keys(d.niveles).length} de ${crit.length} criterios evaluados`;
+}
+const MIME = { pdf: 'application/pdf', docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' };
+async function handleUpload(kind, pid, file) {
+  const p = byId(pid); if (!p || !file) return;
+  const ext = (file.name.split('.').pop() || '').toLowerCase();
+  if (!MIME[ext]) { toast('Sube el archivo en PDF o Word (.docx).'); return; }
+  if (file.size > 20 * 1048576) { toast('El archivo supera los 20 MB.'); return; }
+  const safe = file.name.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^\w.\-]+/g, '_').slice(-80);
+  const path = `${p.id}/${kind}-${Date.now()}-${safe}`;
+  toast('Subiendo archivo…');
+  const up = await sb.storage.from('archivos').upload(path, file, { contentType: MIME[ext], upsert: false });
+  if (up.error) { toast('No se pudo subir el archivo: ' + (up.error.message || '')); return; }
+  if (kind === 'informe') await call('registrar_informe', { p_id: p.id, p_nombre: file.name, p_size: file.size, p_path: path }, v => `Informe recibido (versión ${v}). Tu docente y la empresa ya pueden verlo.`);
+  else await call('registrar_doc_empresa', { p_id: p.id, p_nombre: file.name, p_size: file.size, p_path: path }, 'Documento agregado.');
+}
+const docenteOpts = sel => state.academicos.map(a => `<option value="${esc(a.id)}" ${sel === a.id ? 'selected' : ''}>${esc(a.nombre || a.correo)}</option>`).join('');
+const acts = {
+  logout: async () => { await flushBorrador(); await sb.auth.signOut(); session = null; state = null; ui.auth = { step: 'email', email: '' }; ui.dirSel = null; ui.drafts = {}; render(); },
+  retry: () => { cargando = true; render(); reload(); },
+  'auth-back': () => { ui.auth.step = 'email'; render(); },
+  'dir-tab': el => { ui.dir.tab = el.dataset.tab; ui.dirSel = null; render(); },
+  pipe: el => { ui.dir.etapa = ui.dir.etapa === el.dataset.etapa ? '' : el.dataset.etapa; render(); $('#dir-table')?.scrollIntoView({ block: 'start', behavior: 'smooth' }); },
+  'clear-filters': () => { Object.assign(ui.dir, { q: '', tipo: '', etapa: '', acad: '' }); render(); },
+  open: el => { ui.dirSel = el.dataset.pid; renderDrawer(); $('#drawer-root .icon-btn')?.focus(); },
+  'close-drawer': () => { ui.dirSel = null; renderDrawer(); },
+  csv: () => exportCSV(),
+  approve: () => {
+    const p = byId(ui.dirSel); const bd = businessDaysBetween(p.solicitud.fecha, p.inicio);
+    if (!state.academicos.length) { toast('Primero agrega docentes en la pestaña Personas.'); return; }
+    openDialog({ title: 'Aprobar activación', okLabel: 'Activar práctica',
+      body: `<p>${esc(est(p).nombre)} · ${TIPOS[p.tipo].nombre} en ${esc(p.empresa.razon)}, del ${fmtD(p.inicio)} al ${fmtD(p.termino)}.</p>
+        ${bd < 10 ? `<div class="callout tone-warn"><p>Se solicitó con ${bd} días hábiles de anticipación (mínimo 10).</p></div>` : ''}
+        <div class="fgrid"><div class="field"><label for="d-nrc">NRC</label><input id="d-nrc" value="${esc(p.nrc)}"></div>
+        <div class="field"><label for="d-aca">Docente corrector/a</label><select id="d-aca">${docenteOpts(p.academicoId)}</select></div></div>
+        <p class="note">Al activar, ${esc(p.supervisor.nombre)} (${esc(p.supervisor.correo)}) recibirá en su correo el acceso a la plataforma.</p>`,
+      onOk: async () => {
+        const nrc = $('#d-nrc').value.trim(); if (!nrc) { $('#d-nrc').focus(); toast('Ingresa el NRC.'); return false; }
+        const r = await call('aprobar_activacion', { p_id: p.id, p_nrc: nrc, p_docente: $('#d-aca').value });
+        if (!r.ok) return false;
+        const err = await enviarAcceso(r.data);
+        toast(err ? `Práctica activada, pero no se pudo enviar el acceso a ${r.data} (${err}). Usa «Reenviar acceso» más tarde.` : `Práctica activada. Se envió el acceso a ${r.data}. Falta registrar el seguro.`);
+      } });
+  },
+  'return-req': () => {
+    const p = byId(ui.dirSel);
+    openDialog({ title: 'Devolver solicitud al estudiante', okLabel: 'Devolver', body: `<div class="field"><label for="d-mot">Qué debe corregir</label><textarea id="d-mot" placeholder="Ej.: la empresa no confirmó el cupo para esas fechas."></textarea></div>`,
+      onOk: async () => { const t = $('#d-mot').value.trim(); if (!t) { toast('Escribe el motivo.'); $('#d-mot').focus(); return false; }
+        const r = await call('devolver_solicitud', { p_id: p.id, p_motivo: t }, 'Solicitud devuelta al estudiante.'); return r.ok ? undefined : false; } });
+  },
+  seguro: () => {
+    const p = byId(ui.dirSel);
+    openDialog({ title: 'Registrar seguro de práctica', okLabel: 'Registrar seguro',
+      body: `<div class="fgrid"><div class="field"><label for="d-sf">Fecha de emisión</label><input id="d-sf" type="date" value="${TODAY}"></div><div class="field"><label for="d-folio">Folio o N° de póliza</label><input id="d-folio" placeholder="Opcional"></div></div><p class="note">Con el seguro registrado, ${esc(p.supervisor.nombre)} podrá evaluar y ${esc(est(p).nombre)} podrá subir su informe.</p>`,
+      onOk: async () => { const r = await call('registrar_seguro', { p_id: p.id, p_fecha: $('#d-sf').value || TODAY, p_folio: $('#d-folio').value.trim() }, 'Seguro registrado.'); return r.ok ? undefined : false; } });
+  },
+  close: () => {
+    const p = byId(ui.dirSel); const nf = notaFinal(p);
+    openDialog({ title: 'Cerrar práctica', okLabel: `Cerrar con nota ${fmtN(nf)}`, body: `${notaFinalBlock(p)}<p class="note">Al cerrar, el estudiante verá sus notas y la nota queda lista para el acta. Las evaluaciones ya no se podrán modificar.</p>`,
+      onOk: async () => { const r = await call('cerrar_practica', { p_id: p.id }, n => `Práctica cerrada con nota ${fmtN(Number(n))}.`); return r.ok ? undefined : false; } });
+  },
+  reassign: () => {
+    const p = byId(ui.dirSel);
+    openDialog({ title: 'Cambiar docente corrector/a', okLabel: 'Guardar', body: `<div class="field"><label for="d-aca2">Docente</label><select id="d-aca2">${docenteOpts(p.academicoId)}</select></div>`,
+      onOk: async () => { const v = $('#d-aca2').value; if (v === p.academicoId) return; const r = await call('cambiar_docente', { p_id: p.id, p_docente: v }, 'Docente actualizado.'); return r.ok ? undefined : false; } });
+  },
+  'del-practica': () => {
+    const p = byId(ui.dirSel);
+    openDialog({ title: 'Eliminar práctica', okLabel: 'Eliminar', danger: true, body: `<p>Se eliminará la práctica de ${esc(est(p).nombre)} (${TIPOS[p.tipo].nombre}) con sus cartas e historial. No se puede deshacer.</p>`,
+      onOk: async () => { const r = await call('eliminar_practica', { p_id: p.id }, 'Práctica eliminada.'); if (!r.ok) return false; ui.dirSel = null; renderDrawer(); } });
+  },
+  'resend-access': async () => {
+    const p = byId(ui.dirSel);
+    const r = await call('reenviar_acceso', { p_id: p.id }); if (!r.ok) return;
+    const err = await enviarAcceso(r.data);
+    toast(err ? `No se pudo enviar el acceso a ${r.data}: ${err}` : `Se envió el enlace de acceso a ${r.data}.`);
+  },
+  sel: el => { ui.sel[el.dataset.who] = el.dataset.pid; render(); if (window.innerWidth < 900) $('.detail')?.scrollIntoView({ block: 'start' }); },
+  'aca-f': el => { ui.acaFiltro = el.dataset.f; render(); },
+  dl: el => downloadDoc(byId(el.dataset.pid), el.dataset.kind, Number(el.dataset.i)),
+  'save-draft': async () => { if (await flushBorrador()) toast('Borrador guardado.'); },
+  'emp-send': el => {
+    const p = byId(el.dataset.pid); const key = 'emp:' + p.id; const d = ui.drafts[key];
+    const crit = state.config.matrices[p.tipo].empresa; const falt = crit.filter(c => !d.niveles[c.id]);
+    if (falt.length) { toast(`Falta evaluar ${falt.length} criterio${falt.length > 1 ? 's' : ''}: ${falt[0].nombre}${falt.length > 1 ? '…' : ''}`); document.querySelector(`[data-row="${falt[0].id}"]`)?.scrollIntoView({ block: 'center' }); return; }
+    if (!d.fortalezas.trim()) { toast('Escribe al menos las fortalezas observadas.'); $('#emp-f')?.focus(); return; }
+    const nota = notaDesde(crit, d.niveles, state.config.exigencia);
+    openDialog({ title: 'Enviar evaluación', okLabel: 'Enviar evaluación', body: `<div class="score"><span class="big">${fmtN(nota)}</span><span class="lbl">Nota de la evaluación de ${esc(est(p).nombre)}</span></div><p>Una vez enviada no podrás modificarla. La carrera y el docente corrector la verán de inmediato.</p>`,
+      onOk: async () => { const r = await call('evaluar_empresa', { p_id: p.id, p_niveles: d.niveles, p_extras: { fortalezas: d.fortalezas.trim(), mejoras: d.mejoras.trim(), recibiria: d.recibiria } }, 'Evaluación enviada. ¡Gracias!');
+        if (!r.ok) return false; delete ui.drafts[key]; } });
+  },
+  'aca-send': el => {
+    const p = byId(el.dataset.pid); const key = 'aca:' + p.id; const d = ui.drafts[key];
+    const crit = state.config.matrices[p.tipo].academico; const falt = crit.filter(c => !d.niveles[c.id]);
+    if (falt.length) { toast(`Falta evaluar ${falt.length} criterio${falt.length > 1 ? 's' : ''}: ${falt[0].nombre}${falt.length > 1 ? '…' : ''}`); document.querySelector(`[data-row="${falt[0].id}"]`)?.scrollIntoView({ block: 'center' }); return; }
+    if (!d.comentario.trim()) { toast('Escribe una retroalimentación para el estudiante.'); $('#aca-com')?.focus(); return; }
+    const nota = notaDesde(crit, d.niveles, state.config.exigencia);
+    openDialog({ title: 'Registrar evaluación del informe', okLabel: 'Registrar', body: `<div class="score"><span class="big">${fmtN(nota)}</span><span class="lbl">Informe versión ${last(p.informes).version} · ${esc(est(p).nombre)}</span></div><p>El estudiante verá tu retroalimentación. La nota final se publica cuando la Dirección de Carrera cierre la práctica.</p>`,
+      onOk: async () => { const r = await call('evaluar_academico', { p_id: p.id, p_niveles: d.niveles, p_comentario: d.comentario.trim() }, 'Evaluación registrada.');
+        if (!r.ok) return false; delete ui.drafts[key]; } });
+  },
+  'aca-return': el => {
+    const p = byId(el.dataset.pid); const key = 'aca:' + p.id; const d = ui.drafts[key];
+    if (!d.comentario.trim()) { toast('Escribe en la retroalimentación qué debe corregir.'); $('#aca-com')?.focus(); return; }
+    openDialog({ title: 'Devolver informe con observaciones', okLabel: 'Devolver', body: `<p>El estudiante recibirá estas observaciones y deberá subir una nueva versión:</p><div class="callout tone-warn"><p>${esc(d.comentario.trim())}</p></div>`,
+      onOk: async () => { const r = await call('devolver_informe', { p_id: p.id, p_texto: d.comentario.trim() }, 'Informe devuelto al estudiante.'); if (!r.ok) return false; d.comentario = ''; render(); } });
+  },
+  'mx-add': () => { const [t, r] = ui.mxEdit.split('.'); state.config.matrices[t][r].push({ id: 'c' + uid(), nombre: 'Nuevo criterio', desc: '', peso: 0 }); render(); queueConfig(); },
+  'mx-del': el => { const [t, r] = ui.mxEdit.split('.'); const arr = state.config.matrices[t][r]; if (arr.length < 2) return; arr.splice(Number(el.dataset.i), 1); render(); queueConfig(); },
+  'carta-dl': el => { const p = byId(el.dataset.pid); const c = p.cartas.find(x => x.id === el.dataset.cid); offerFile(nombreArchivoCarta(p, c), cartaPdf(p, c)); },
+  'carta-emit': el => {
+    const p = byId(el.dataset.pid); const c = p.cartas.find(x => x.id === el.dataset.cid);
+    openDialog({ title: 'Emitir carta de presentación', okLabel: 'Emitir carta',
+      body: `<p>${esc(est(p).nombre)} · ${TIPOS[p.tipo].nombre} (${codigo(p)}), malla ${est(p).malla}, ${est(p).nivel}° nivel aprobado.</p>
+        <dl class="facts"><div><dt>Empresa</dt><dd>${esc(c.empresa) || 'Uso general'}</dd></div><div><dt>Dirigida a</dt><dd>${esc(c.destinatario) || 'A quien corresponda'}${c.cargo ? ' · ' + esc(c.cargo) : ''}</dd></div><div><dt>Vigencia</dt><dd>${state.config.carta.vigencia} días</dd></div></dl>
+        ${!state.config.carta.firmante ? '<div class="callout tone-warn"><p>La carta saldrá sin nombre en la firma. Puedes agregarlo en Configuración.</p></div>' : ''}`,
+      onOk: async () => { const r = await call('emitir_carta', { p_carta: c.id }, 'Carta emitida.'); return r.ok ? undefined : false; } });
+  },
+  'carta-rech': el => {
+    const c0 = byId(el.dataset.pid).cartas.find(x => x.id === el.dataset.cid);
+    openDialog({ title: 'Rechazar solicitud de carta', okLabel: 'Rechazar', danger: true, body: `<div class="field"><label for="d-cm">Motivo (lo verá el estudiante)</label><textarea id="d-cm" placeholder="Ej.: aún no cumples el requisito de nivel aprobado."></textarea></div>`,
+      onOk: async () => { const t = $('#d-cm').value.trim(); if (!t) { toast('Escribe el motivo.'); $('#d-cm').focus(); return false; }
+        const r = await call('rechazar_carta', { p_carta: c0.id, p_motivo: t }, 'Solicitud rechazada.'); return r.ok ? undefined : false; } });
+  },
+  'carta-new': () => {
+    const p = byId(ui.dirSel);
+    openDialog({ title: 'Emitir carta de presentación', okLabel: 'Emitir carta',
+      body: `<p>Para ${esc(est(p).nombre)} · ${TIPOS[p.tipo].nombre} (${codigo(p)}).</p><div class="fgrid">
+        <div class="field"><label for="d-cemp">Empresa</label><input id="d-cemp" placeholder="Vacío = carta general"></div>
+        <div class="field"><label for="d-cdest">Dirigida a</label><input id="d-cdest" placeholder="Opcional"></div>
+        <div class="field"><label for="d-ccar">Cargo</label><input id="d-ccar" placeholder="Opcional"></div></div>`,
+      onOk: async () => { const r = await call('nueva_carta', { p_id: p.id, p_empresa: $('#d-cemp').value.trim(), p_destinatario: $('#d-cdest').value.trim(), p_cargo: $('#d-ccar').value.trim() }, 'Carta emitida.'); return r.ok ? undefined : false; } });
+  },
+  'carta-preview': () => {
+    const p = state.practicas[0];
+    if (!p) { toast('Carga al menos un estudiante para ver la carta de ejemplo.'); return; }
+    const c = { empresa: 'Empresa de ejemplo SpA', destinatario: 'Nombre Apellido', cargo: 'Jefe/a de TI', fechaEmision: TODAY, vence: addDaysIso(TODAY, Number(state.config.carta.vigencia) || 60), folio: 'ICIF-PAP-EJEMPLO', codigo: 'XXXX-XXXX' };
+    offerFile('Carta_presentacion_ejemplo.pdf', cartaPdf(p, c));
+  },
+  'carga-enviar': async () => {
+    const { filas, errores } = parseCarga(ui.cargaTxt); if (!filas.length || errores.length) return;
+    const r = await call('agregar_personas', { p_lista: filas }, d => `${d.personas} estudiante${d.personas === 1 ? '' : 's'} cargado${d.personas === 1 ? '' : 's'} · ${d.practicas} práctica${d.practicas === 1 ? '' : 's'} nueva${d.practicas === 1 ? '' : 's'}.`);
+    if (r.ok) { ui.cargaTxt = ''; render(); }
+  },
+  'dlg-cancel': () => closeDialog(),
+  'dlg-ok': async el => {
+    const fn = dlgOk; if (!fn) { closeDialog(); return; }
+    el.disabled = true; let r;
+    try { r = await fn(); } finally { el.disabled = false; }
+    if (r === false) return; closeDialog();
+  }
+};
+
+document.addEventListener('click', ev => {
+  const el = ev.target.closest('[data-act]'); if (!el) return;
+  if (el.tagName === 'TR' && ev.target.closest('button')) return;
+  const fn = acts[el.dataset.act]; if (fn) { ev.preventDefault(); fn(el); }
+});
+document.addEventListener('submit', async ev => {
+  const form = ev.target; ev.preventDefault();
+  const kind = form.dataset.form;
+  if (kind === 'auth-email') {
+    const email = $('#au-mail').value.trim().toLowerCase();
+    if (!emailValido(email)) { toast('Escribe un correo válido.'); return; }
+    const btn = form.querySelector('button[type="submit"]'); btn.disabled = true;
+    const { error } = await sb.auth.signInWithOtp({ email, options: { shouldCreateUser: true, emailRedirectTo: siteUrl() } });
+    btn.disabled = false;
+    if (error) { toast('No pudimos enviar el correo: ' + (error.message || '')); return; }
+    ui.auth = { step: 'code', email }; render(); $('#au-code')?.focus(); return;
+  }
+  if (kind === 'auth-code') {
+    const token = $('#au-code').value.trim();
+    if (!/^\d{6,10}$/.test(token)) { toast('Escribe el código que llegó a tu correo.'); return; }
+    const { error } = await sb.auth.verifyOtp({ email: ui.auth.email, token, type: 'email' });
+    if (error) { toast('El código no es válido o ya venció. Pide uno nuevo.'); return; }
+    return; // onAuthStateChange carga los datos
+  }
+  if (kind === 'equipo') {
+    const nombre = $('#eq-n').value.trim(), email = $('#eq-m').value.trim().toLowerCase(), rol = $('#eq-r').value;
+    if (!nombre || !emailValido(email)) { toast('Escribe nombre y correo válidos.'); return; }
+    await call('agregar_personas', { p_lista: [{ email, nombre, rol }] }, `${nombre} agregado/a al equipo.`); return;
+  }
+  if (kind === 'carta') {
+    const p = practicaDe(state.yo.email); const e = est(p);
+    if (e.malla === '2024' && Number(e.nivel) < TIPOS[p.tipo].nivelMin) { toast(`Para pedir la carta necesitas el ${TIPOS[p.tipo].nivelMin}° nivel aprobado.`); return; }
+    if (!$('#c-req').checked) { toast('Debes declarar que cumples los requisitos.'); $('#c-req').focus(); return; }
+    await call('pedir_carta', { p_id: p.id, p_empresa: $('#c-emp').value.trim(), p_destinatario: $('#c-dest').value.trim(), p_cargo: $('#c-cargo').value.trim() },
+      d => d.estado === 'emitida' ? `Carta N° ${d.folio} emitida. Ya puedes descargarla.` : 'Solicitud enviada. La Dirección de Carrera emitirá tu carta.');
+    return;
+  }
+  if (kind === 'solicitud') {
+    const p = practicaDe(state.yo.email); const e = est(p);
+    ui.formErrors = validarSolicitud(p, e);
+    if (Object.keys(ui.formErrors).length) { render(); $('.errbox')?.scrollIntoView({ block: 'center' }); return; }
+    if (!(await flushBorrador())) return;
+    const bd = businessDaysBetween(TODAY, p.inicio);
+    const [, m, d] = TODAY.split('-').map(Number); const tarde = (m === 1 && d > 15) || m === 2;
+    openDialog({ title: 'Enviar solicitud de activación', okLabel: 'Enviar solicitud',
+      body: `<p>Se enviará a la Dirección de Carrera tu solicitud para <b>${TIPOS[p.tipo].nombre}</b> (${codigo(p)}, NRC ${esc(p.nrc)}) en <b>${esc(p.empresa.razon)}</b>, del ${fmtD(p.inicio)} al ${fmtD(p.termino)}.</p>
+        ${bd < 10 ? `<div class="callout tone-warn"><p>Faltan ${bd} días hábiles para el inicio. El proceso pide al menos 10; la activación podría no alcanzar a estar lista.</p></div>` : ''}
+        ${tarde ? '<div class="callout tone-warn"><p>Ya pasó el 15 de enero, fecha límite para solicitar prácticas de verano.</p></div>' : ''}`,
+      onOk: async () => { const r = await call('enviar_solicitud', { p_id: p.id }, 'Solicitud enviada a la Dirección de Carrera.'); if (!r.ok) return false; ui.formErrors = {}; } });
+  }
+});
+function bindTarget() { const e = state.estudiantes.find(x => x.id === state.yo.email); const p = practicaDe(state.yo.email); return { e, p }; }
+document.addEventListener('input', ev => {
+  const t = ev.target;
+  if (t.dataset.filter) { ui.dir[t.dataset.filter] = t.value; if (t.dataset.filter === 'q') { renderDirTable(); saveUI(); } return; }
+  if (t.dataset.cfilter !== undefined) { ui.cq = t.value; renderCartas(); return; }
+  if (t.dataset.carga !== undefined) { ui.cargaTxt = t.value; renderCargaPreview(); return; }
+  if (t.dataset.cfgc && t.type !== 'checkbox') { const k = t.dataset.cfgc; state.config.carta[k] = k === 'vigencia' ? (Number(t.value) || 60) : t.value; queueConfig(); return; }
+  if (t.dataset.bind && t.type !== 'checkbox' && t.tagName !== 'SELECT') {
+    const { e, p } = bindTarget(); setBind(t.dataset.bind, t.value, p, e);
+    queueBorrador(p.id, pathToPatch(t.dataset.bind, t.value));
+    if (ui.formErrors[t.dataset.bind]) { delete ui.formErrors[t.dataset.bind]; t.closest('.field')?.classList.remove('err'); }
+    return;
+  }
+  if (t.dataset.draft && t.tagName === 'TEXTAREA') { ui.drafts[t.dataset.draft][t.dataset.k] = t.value; return; }
+  if (t.dataset.cfgm !== undefined) {
+    const [tp, r] = ui.mxEdit.split('.'); const c = state.config.matrices[tp][r][Number(t.dataset.cfgm)];
+    c[t.dataset.f] = t.dataset.f === 'peso' ? Number(t.value) || 0 : t.value; queueConfig();
+    const sum = state.config.matrices[tp][r].reduce((s, x) => s + (Number(x.peso) || 0), 0); const el = $('#mx-sum');
+    if (el) { el.textContent = `Suma de pesos: ${sum}%${sum === 100 ? '' : ' (debe sumar 100%)'}`; el.className = sum === 100 ? 'sum-ok' : 'sum-bad'; }
+    const pv = $('#mx-preview'); if (pv) pv.innerHTML = matrizHTML(state.config.matrices[tp][r], {});
+    return;
+  }
+  if (t.dataset.cfgw) {
+    const v = Math.max(0, Math.min(100, Number(t.value) || 0)); const w = state.config.ponderacion[t.dataset.cfgw]; w.empresa = v; w.academico = 100 - v;
+    const other = $(`#w-${t.dataset.cfgw}-a`); if (other) other.value = w.academico; queueConfig(); return;
+  }
+  if (t.dataset.cfgx !== undefined) { const v = Number(t.value); if (v >= 50 && v <= 70) { state.config.exigencia = v; queueConfig(); } return; }
+});
+document.addEventListener('change', ev => {
+  const t = ev.target;
+  if (t.dataset.filter && t.tagName === 'SELECT') { ui.dir[t.dataset.filter] = t.value; render(); return; }
+  if (t.dataset.actChange === 'mx-sel') { ui.mxEdit = t.value; render(); return; }
+  if (t.dataset.mx) {
+    const key = t.dataset.mx; ui.drafts[key].niveles[t.dataset.cid] = Number(t.value);
+    const row = t.closest('tr'); row.querySelectorAll('td.lvl').forEach(td => td.classList.toggle('sel', td.contains(t)));
+    updateMatrixPreview(key); return;
+  }
+  if (t.dataset.draft && t.type === 'radio') { ui.drafts[t.dataset.draft][t.dataset.k] = t.value; return; }
+  if (t.dataset.bind && (t.type === 'checkbox' || t.tagName === 'SELECT')) {
+    const { e, p } = bindTarget(); const v = t.type === 'checkbox' ? t.checked : t.value;
+    setBind(t.dataset.bind, v, p, e); queueBorrador(p.id, pathToPatch(t.dataset.bind, v));
+    if (ui.formErrors[t.dataset.bind]) delete ui.formErrors[t.dataset.bind];
+    if (t.hasAttribute('data-rerender') || t.type === 'checkbox') render();
+    return;
+  }
+  if (t.dataset.upload) { handleUpload(t.dataset.upload, t.dataset.pid, t.files && t.files[0]); t.value = ''; return; }
+  if (t.dataset.cfgc && t.type === 'checkbox') { state.config.carta[t.dataset.cfgc] = t.checked; queueConfig(); return; }
+});
+['dragover', 'dragenter'].forEach(n => document.addEventListener(n, ev => { const z = ev.target.closest?.('.drop'); if (z) { ev.preventDefault(); z.classList.add('over'); } }));
+['dragleave', 'drop'].forEach(n => document.addEventListener(n, ev => { const z = ev.target.closest?.('.drop'); if (z) z.classList.remove('over'); }));
+document.addEventListener('drop', ev => {
+  const z = ev.target.closest?.('.drop'); if (!z) return; ev.preventDefault();
+  const f = ev.dataTransfer?.files?.[0]; if (f) handleUpload(z.dataset.drop, z.dataset.pid, f);
+});
+document.addEventListener('keydown', ev => {
+  if (ev.key !== 'Escape') return;
+  if ($('#modal-root').innerHTML) { closeDialog(); return; }
+  if (ui.dirSel) { ui.dirSel = null; renderDrawer(); }
+});
+window.addEventListener('beforeunload', () => { if (borradorPend) flushBorrador(); });
+
+(async function init() {
+  if (!sb) { cargando = false; render(); return; }
+  render();
+  sb.auth.onAuthStateChange((evento, s) => {
+    const antes = session; session = s;
+    if (!s) { if (antes) { state = null; render(); } return; }
+    if ((evento === 'SIGNED_IN' || evento === 'INITIAL_SESSION') && (!antes || !state)) { cargando = true; render(); reload(); }
+  });
+  const { data } = await sb.auth.getSession();
+  session = data.session;
+  if (session) { if (!state && !reloadP) reload(); } else { cargando = false; render(); }
+})();
+
+</script>
+</body>
+</html>
